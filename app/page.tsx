@@ -9,7 +9,7 @@ export default function HomePage() {
     <>
       <LoadingExperience />
       <TopNavigation />
-      <main className="relative mx-auto w-[min(1440px,96vw)] pb-24 pt-24 lg:pt-28">
+      <main className="relative mx-auto w-[min(1680px,99vw)] pb-24 pt-24 lg:pt-28">
         <HeroSection />
         <StorytellingExperience />
         <ContactSection />

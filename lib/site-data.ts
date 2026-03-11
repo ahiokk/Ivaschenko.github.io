@@ -1,152 +1,111 @@
-export type BuildStageKey =
-  | "blueprint"
-  | "foundation"
-  | "firstFloor"
-  | "framework"
-  | "upperFloors"
-  | "rooftop";
-
-export interface StageContent {
-  key: BuildStageKey;
-  sectionId: string;
-  stageLabel: string;
-  stepLabel: string;
-  title: string;
-  description: string;
-  notes?: string[];
+export interface BuildStep {
+  key:
+    | "site"
+    | "foundation"
+    | "columns"
+    | "beams"
+    | "floors"
+    | "facade"
+    | "upper"
+    | "rooftop";
+  anchor: string;
+  label: string;
+  short: string;
+  start: number;
 }
 
-export const stageOrder: BuildStageKey[] = [
-  "blueprint",
-  "foundation",
-  "firstFloor",
-  "framework",
-  "upperFloors",
-  "rooftop"
+export interface NarrativeMoment {
+  key: "foundation" | "firstStructure" | "framework" | "upperFloors" | "rooftop";
+  title: string;
+  subtitle: string;
+  copy: string;
+  quote: string;
+  start: number;
+}
+
+export const buildSteps: BuildStep[] = [
+  { key: "site", anchor: "site-grid", label: "Site Grid", short: "01", start: 0.0 },
+  { key: "foundation", anchor: "foundation", label: "Foundation", short: "02", start: 0.1 },
+  { key: "columns", anchor: "columns", label: "Columns", short: "03", start: 0.2 },
+  { key: "beams", anchor: "beams", label: "Frame Beams", short: "04", start: 0.32 },
+  { key: "floors", anchor: "floors", label: "Floor Plates", short: "05", start: 0.45 },
+  { key: "facade", anchor: "facade", label: "Glass Facade", short: "06", start: 0.6 },
+  { key: "upper", anchor: "upper", label: "Upper Levels", short: "07", start: 0.74 },
+  { key: "rooftop", anchor: "rooftop", label: "Rooftop", short: "08", start: 0.88 }
 ];
 
-export const stageContent: StageContent[] = [
-  {
-    key: "blueprint",
-    sectionId: "blueprint",
-    stageLabel: "Blueprint",
-    stepLabel: "01",
-    title: "Пространство идеи и архитектурная сетка",
-    description:
-      "Все началось с чертежа: я училась видеть данные как систему. Не просто цифры, а структуру, зависимости и логику решений."
-  },
+export const narrativeMoments: NarrativeMoment[] = [
   {
     key: "foundation",
-    sectionId: "foundation",
-    stageLabel: "Foundation",
-    stepLabel: "02",
-    title: "Фундамент: дисциплина, база, системность",
-    description:
-      "Я собрала основу: аналитическое мышление, SQL-базу, чистую работу с данными и привычку к аккуратной верификации гипотез.",
-    notes: [
-      "Фокус на базе данных и качестве источников",
-      "Переход от интереса к регулярной практике",
-      "Первые KPI-блоки и карта метрик"
-    ]
+    title: "Foundation",
+    subtitle: "База. Дисциплина. Системность.",
+    copy: "Сильный результат начинается с правильного фундамента: аналитическая база, rigor и архитектура мышления.",
+    quote: "Рост — это не удача. Это архитектура.",
+    start: 0.08
   },
   {
-    key: "firstFloor",
-    sectionId: "projects",
-    stageLabel: "First Floor",
-    stepLabel: "03",
-    title: "Первый этаж: реальные проекты и первые результаты",
-    description:
-      "Я начала строить рабочие кейсы: от первых отчетов и ошибок до устойчивых решений, которые команда стала использовать в ежедневной работе.",
-    notes: [
-      "Автоматизация регулярных отчетов",
-      "Единая логика метрик для разных команд",
-      "Четкие выводы вместо ручной сводки"
-    ]
+    key: "firstStructure",
+    title: "First Structure",
+    subtitle: "Первые проекты и практическая глубина.",
+    copy: "Первые этажи опыта: реальные задачи, ранние ошибки, итерации и устойчивые рабочие решения в проде.",
+    quote: "Я строила себя шаг за шагом.",
+    start: 0.3
   },
   {
     key: "framework",
-    sectionId: "skills",
-    stageLabel: "Structure",
-    stepLabel: "04",
-    title: "Каркас: уверенные навыки и архитектура знаний",
-    description:
-      "На этом этапе сформировался профессиональный каркас: SQL, BI-визуализация, data storytelling и продуктовая аналитика стали работать как единая конструкция."
+    title: "Framework",
+    subtitle: "Сильные навыки и каркас знаний.",
+    copy: "SQL, BI, data modeling и storytelling собираются в единую инженерную конструкцию решений.",
+    quote: "Каждый уровень опирается на основание.",
+    start: 0.5
   },
   {
     key: "upperFloors",
-    sectionId: "complex",
-    stageLabel: "Elevation",
-    stepLabel: "05",
-    title: "Верхние этажи: сложные задачи и рост ответственности",
-    description:
-      "Я перешла к более сложным кейсам: multi-source аналитика, приоритизация гипотез, cross-team коммуникация и зрелые решения под бизнес-цели.",
-    notes: [
-      "Сокращение ручного труда в отчетах",
-      "Рост скорости решений на основе данных",
-      "Усиление прозрачности KPI"
-    ]
+    title: "Upper Floors",
+    subtitle: "Сложные кейсы и рост ответственности.",
+    copy: "Мультикомандные задачи, архитектура метрик и зрелые BI-сценарии с измеримым бизнес-эффектом.",
+    quote: "Сильный результат начинается с правильного фундамента.",
+    start: 0.7
   },
   {
     key: "rooftop",
-    sectionId: "rooftop",
-    stageLabel: "Rooftop",
-    stepLabel: "06",
-    title: "Крыша: мой текущий уровень и следующий горизонт",
-    description:
-      "Сегодня я строю BI как инженерную систему решений. Каждый уровень опирается на фундамент, а рост остается управляемым и осознанным."
-  }
-];
-
-export const projectCards = [
-  {
-    name: "Retention Pulse",
-    stack: "SQL · Power BI · Cohort",
-    summary: "Система анализа удержания с weekly-срезами и ранними сигналами оттока.",
-    result: "Время подготовки отчета: -62%"
-  },
-  {
-    name: "Ops Control Desk",
-    stack: "Data Modeling · BI",
-    summary: "Операционная панель с приоритетами задач и контролем SLA по процессам.",
-    result: "Скорость реакции команд: +34%"
-  },
-  {
-    name: "Revenue Bridge",
-    stack: "Dashboarding · Storytelling",
-    summary: "Связка воронки, выручки и продуктовых сигналов в одном бизнес-потоке.",
-    result: "Доверие к цифрам в команде: 91%"
+    title: "Rooftop",
+    subtitle: "Текущий уровень и следующий вектор.",
+    copy: "Сейчас я строю BI как систему принятия решений и готова к более сложным архитектурным задачам в данных.",
+    quote: "Следующий уровень — продолжение той же архитектуры.",
+    start: 0.88
   }
 ];
 
 export const kpiCards = [
-  { label: "Отчеты в проде", value: "186+" },
-  { label: "Часы аналитических синков", value: "312" },
-  { label: "Автоматизация отчетности", value: "74%" },
-  { label: "Data trust score", value: "91%" }
+  { label: "Delivered Reports", value: "186+" },
+  { label: "Strategy Sync Hours", value: "312" },
+  { label: "Automation Coverage", value: "74%" },
+  { label: "Data Trust Index", value: "91%" }
 ];
 
 export const growthLineData = [
-  { month: "Авг", reports: 12, complexity: 24 },
-  { month: "Сен", reports: 18, complexity: 32 },
-  { month: "Окт", reports: 25, complexity: 41 },
-  { month: "Ноя", reports: 31, complexity: 52 },
-  { month: "Дек", reports: 36, complexity: 61 },
-  { month: "Янв", reports: 41, complexity: 74 },
-  { month: "Фев", reports: 47, complexity: 86 }
+  { month: "Aug", reports: 11, complexity: 22 },
+  { month: "Sep", reports: 17, complexity: 31 },
+  { month: "Oct", reports: 24, complexity: 43 },
+  { month: "Nov", reports: 30, complexity: 54 },
+  { month: "Dec", reports: 36, complexity: 63 },
+  { month: "Jan", reports: 42, complexity: 76 },
+  { month: "Feb", reports: 48, complexity: 88 }
 ];
 
 export const radarData = [
-  { subject: "SQL", before: 28, now: 89 },
-  { subject: "BI Viz", before: 34, now: 92 },
-  { subject: "Modeling", before: 22, now: 84 },
-  { subject: "Storytelling", before: 37, now: 90 },
-  { subject: "Product", before: 31, now: 86 },
-  { subject: "Automation", before: 24, now: 80 }
+  { subject: "SQL", before: 30, now: 90 },
+  { subject: "BI Viz", before: 34, now: 93 },
+  { subject: "Data Model", before: 24, now: 86 },
+  { subject: "Storytelling", before: 36, now: 91 },
+  { subject: "Product", before: 32, now: 87 },
+  { subject: "Automation", before: 25, now: 82 }
 ];
 
 export const miniBars = [
-  { name: "SQL / Query Design", value: 92 },
-  { name: "Data Modeling", value: 86 },
-  { name: "Dashboard Architecture", value: 90 },
-  { name: "Business Framing", value: 84 }
+  { name: "SQL Architecture", value: 93 },
+  { name: "Dashboard Systems", value: 90 },
+  { name: "Metric Engineering", value: 87 },
+  { name: "Decision Storytelling", value: 89 }
 ];
