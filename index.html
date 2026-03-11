@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BI Summit | Путь Иващенко</title>
+  <meta name="description" content="Визуальная история роста будущего BI-аналитика: от первых таблиц до системных решений и дашбордов.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="sky"></div>
+  <div class="sun-glow"></div>
+  <div class="haze"></div>
+  <div class="mountain-layer mountain-far"></div>
+  <div class="mountain-layer mountain-mid"></div>
+  <div class="mountain-layer mountain-front"></div>
+
+  <div class="route-overlay" aria-hidden="true">
+    <svg class="route-svg" viewBox="0 0 900 1600" preserveAspectRatio="none">
+      <path id="route-base" d="M110 1530 C 220 1360, 140 1220, 280 1040 C 430 850, 340 690, 510 520 C 650 380, 640 210, 780 80"></path>
+      <path id="route-progress" d="M110 1530 C 220 1360, 140 1220, 280 1040 C 430 850, 340 690, 510 520 C 650 380, 640 210, 780 80"></path>
+    </svg>
+    <div id="climber" class="climber" aria-hidden="true"></div>
+  </div>
+
+  <main>
+    <section class="panel hero" id="basecamp">
+      <p class="label">СТАРТ ПОДЪЕМА</p>
+      <h1>От хаоса в таблицах к <span>вершине BI-аналитики</span></h1>
+      <p class="intro">
+        Это моя визуальная история роста. Каждый скролл вниз - выше уровень: больше данных, сильнее решения, заметнее результат.
+      </p>
+      <div class="hero-cards">
+        <article class="stat-card">
+          <p class="stat-value count-up" data-target="7">0</p>
+          <p class="stat-caption">месяцев активного роста</p>
+        </article>
+        <article class="stat-card">
+          <p class="stat-value count-up" data-target="12">0</p>
+          <p class="stat-caption">реальных мини-проектов</p>
+        </article>
+        <article class="stat-card">
+          <p class="stat-value count-up" data-target="4">0</p>
+          <p class="stat-caption">ключевых инструмента BI</p>
+        </article>
+      </div>
+      <p class="scroll-note">Листайте вниз: высота и результаты растут вместе.</p>
+    </section>
+
+    <section class="panel checkpoint" id="before">
+      <div class="altitude">Высота: 900 м</div>
+      <h2>До: точка, где всё начиналось</h2>
+      <div class="split-grid">
+        <article class="glass">
+          <h3>Было</h3>
+          <ul>
+            <li>Отчеты собирались вручную в нескольких файлах.</li>
+            <li>Структура данных менялась от недели к неделе.</li>
+            <li>На звонках обсуждали цифры, но без единой версии правды.</li>
+          </ul>
+        </article>
+        <article class="glass">
+          <h3>Первая цель</h3>
+          <p>Собрать понятную систему: единый слой данных, прозрачные KPI и визуализация, которой доверяет команда.</p>
+          <div class="mini-kpi">
+            <div>
+              <p class="kpi-number">68%</p>
+              <p class="kpi-label">времени уходило на ручную подготовку</p>
+            </div>
+            <div>
+              <p class="kpi-number">9</p>
+              <p class="kpi-label">источников без синхронизации</p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel checkpoint" id="skills">
+      <div class="altitude">Высота: 1 750 м</div>
+      <h2>Подъем: прокачка BI-навыков</h2>
+      <div class="timeline">
+        <article class="timeline-item">
+          <p class="timeline-month">Месяц 1-2</p>
+          <h3>Данные под контроль</h3>
+          <p>Очистка источников, нормализация справочников, построение логики метрик.</p>
+        </article>
+        <article class="timeline-item">
+          <p class="timeline-month">Месяц 3-4</p>
+          <h3>SQL + витрины</h3>
+          <p>Автоматизировала сбор данных и сократила время подготовки еженедельного отчета.</p>
+        </article>
+        <article class="timeline-item">
+          <p class="timeline-month">Месяц 5-6</p>
+          <h3>Дашборды и история в цифрах</h3>
+          <p>Собрала линейку интерактивных дашбордов для руководства и продуктовой команды.</p>
+        </article>
+      </div>
+      <div class="skills-band">
+        <span>SQL</span>
+        <span>Power BI</span>
+        <span>Tableau</span>
+        <span>Python</span>
+        <span>Data Storytelling</span>
+      </div>
+    </section>
+
+    <section class="panel checkpoint dashboard-zone" id="dashboards">
+      <div class="altitude">Высота: 2 450 м</div>
+      <h2>Дашборды, которые стали рабочим инструментом</h2>
+      <p class="section-lead">Факты и значения тестовые, но структура максимально близка к реальному BI-кейсу.</p>
+      <div class="kpi-grid">
+        <article class="kpi-card">
+          <p class="kpi-title">Выполненные отчеты</p>
+          <p class="kpi-value count-up" data-target="186">0</p>
+          <p class="kpi-foot">за 7 месяцев</p>
+        </article>
+        <article class="kpi-card">
+          <p class="kpi-title">Часы созвонов</p>
+          <p class="kpi-value count-up" data-target="312">0</p>
+          <p class="kpi-foot">с аналитикой и продуктом</p>
+        </article>
+        <article class="kpi-card">
+          <p class="kpi-title">Автоматизация отчетности</p>
+          <p class="kpi-value count-up" data-target="74">0<span>%</span></p>
+          <p class="kpi-foot">ручная работа сокращена</p>
+        </article>
+        <article class="kpi-card">
+          <p class="kpi-title">Доверие к данным</p>
+          <p class="kpi-value count-up" data-target="91">0<span>%</span></p>
+          <p class="kpi-foot">по внутреннему опросу команд</p>
+        </article>
+      </div>
+
+      <div class="chart-grid">
+        <article class="chart-card">
+          <h3>Динамика выполненных отчетов</h3>
+          <canvas id="reportsChart"></canvas>
+        </article>
+        <article class="chart-card">
+          <h3>Часы аналитических созвонов</h3>
+          <canvas id="callsChart"></canvas>
+        </article>
+        <article class="chart-card">
+          <h3>Фокус задач BI-аналитика</h3>
+          <canvas id="focusChart"></canvas>
+        </article>
+        <article class="chart-card">
+          <h3>Рост компетенций</h3>
+          <canvas id="skillsChart"></canvas>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel checkpoint summit" id="summit">
+      <div class="altitude">Высота: 3 100 м</div>
+      <h2>Финиш: где я сейчас</h2>
+      <p class="summit-intro">
+        Сегодня я строю BI как систему принятия решений: от качества источников до бизнес-выводов на одном экране.
+      </p>
+      <div class="summit-grid">
+        <article class="glass">
+          <h3>Что имею</h3>
+          <ul>
+            <li>Сквозная аналитика по ключевым бизнес-направлениям.</li>
+            <li>Единый стандарт метрик и прозрачный data glossary.</li>
+            <li>Дашборды для руководства, продукта и операционных команд.</li>
+          </ul>
+        </article>
+        <article class="glass">
+          <h3>Мой BI-почерк</h3>
+          <p>Понимаю язык бизнеса и перевожу его в язык данных: быстро, аккуратно, визуально ясно.</p>
+          <a class="cta" href="#basecamp">Пройти маршрут снова</a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
