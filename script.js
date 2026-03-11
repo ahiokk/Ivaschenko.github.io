@@ -1,88 +1,127 @@
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-function updateRouteProgress() {
-  const basePath = document.getElementById("route-base");
-  const progressPath = document.getElementById("route-progress");
-  const climber = document.getElementById("climber");
-
-  if (!basePath || !progressPath || !climber) return;
-
-  const totalLength = basePath.getTotalLength();
-  progressPath.style.strokeDasharray = `${totalLength}`;
-  progressPath.style.strokeDashoffset = `${totalLength}`;
-
-  const move = () => {
-    const doc = document.documentElement;
-    const maxScroll = doc.scrollHeight - window.innerHeight;
-    const raw = maxScroll > 0 ? window.scrollY / maxScroll : 0;
-    const progress = Math.min(Math.max(raw, 0), 1);
-
-    const currentLength = totalLength * progress;
-    progressPath.style.strokeDashoffset = `${totalLength - currentLength}`;
-
-    const point = basePath.getPointAtLength(currentLength);
-    const svg = basePath.ownerSVGElement.getBoundingClientRect();
-    const scaleX = svg.width / basePath.ownerSVGElement.viewBox.baseVal.width;
-    const scaleY = svg.height / basePath.ownerSVGElement.viewBox.baseVal.height;
-
-    climber.style.left = `${svg.left + point.x * scaleX}px`;
-    climber.style.top = `${svg.top + point.y * scaleY}px`;
-  };
-
-  move();
-  window.addEventListener("scroll", move, { passive: true });
-  window.addEventListener("resize", move);
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
 }
 
-function animateCounters() {
+function setupMountainRoute() {
+  const journey = document.getElementById("journey");
+  const routeBase = document.getElementById("routeBase");
+  const routeProgress = document.getElementById("routeProgress");
+  const climber = document.getElementById("climber");
+  const mountainSvg = document.getElementById("mountainSvg");
+  const altitudeMeter = document.getElementById("altitudeMeter");
+
+  if (!journey || !routeBase || !routeProgress || !climber || !mountainSvg || !altitudeMeter) return;
+
+  const routeLength = routeBase.getTotalLength();
+  routeProgress.style.strokeDasharray = String(routeLength);
+  routeProgress.style.strokeDashoffset = String(routeLength);
+
+  const viewBox = mountainSvg.viewBox.baseVal;
+  const minAltitude = 450;
+  const maxAltitude = 3100;
+
+  const updateProgress = () => {
+    const rect = journey.getBoundingClientRect();
+    const startLine = window.innerHeight * 0.2;
+    const endLine = window.innerHeight * 0.82;
+    const track = rect.height + startLine - endLine;
+    const progress = clamp((startLine - rect.top) / track, 0, 1);
+
+    const currentLength = routeLength * progress;
+    routeProgress.style.strokeDashoffset = String(routeLength - currentLength);
+
+    const point = routeBase.getPointAtLength(currentLength);
+    const xPercent = (point.x / viewBox.width) * 100;
+    const yPercent = (point.y / viewBox.height) * 100;
+    climber.style.left = `${xPercent}%`;
+    climber.style.top = `${yPercent}%`;
+
+    const altitude = Math.round(minAltitude + (maxAltitude - minAltitude) * progress);
+    altitudeMeter.textContent = altitude.toLocaleString("ru-RU");
+  };
+
+  updateProgress();
+  window.addEventListener("scroll", updateProgress, { passive: true });
+  window.addEventListener("resize", updateProgress);
+}
+
+function setupStepsHighlight() {
+  const steps = Array.from(document.querySelectorAll(".step-card"));
+  const dots = Array.from(document.querySelectorAll(".checkpoint-dot"));
+
+  if (!steps.length || !dots.length) return;
+
+  const activate = (index) => {
+    steps.forEach((step, stepIndex) => {
+      step.classList.toggle("active", stepIndex === index);
+    });
+
+    dots.forEach((dot) => {
+      const dotStep = Number(dot.dataset.step || "0") - 1;
+      dot.classList.toggle("active", dotStep <= index);
+    });
+  };
+
+  const updateActiveStep = () => {
+    let activeIndex = 0;
+    let bestDistance = Number.POSITIVE_INFINITY;
+    const viewportCenter = window.innerHeight * 0.5;
+
+    steps.forEach((step, index) => {
+      const rect = step.getBoundingClientRect();
+      const center = rect.top + rect.height * 0.5;
+      const distance = Math.abs(viewportCenter - center);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        activeIndex = index;
+      }
+    });
+
+    activate(activeIndex);
+  };
+
+  updateActiveStep();
+  window.addEventListener("scroll", updateActiveStep, { passive: true });
+  window.addEventListener("resize", updateActiveStep);
+}
+
+function setupCounters() {
   const counters = document.querySelectorAll(".count-up");
+  if (!counters.length) return;
 
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
+
         const el = entry.target;
         const target = Number(el.dataset.target || "0");
-        const duration = reducedMotion ? 100 : 1500;
-        const start = performance.now();
+        const duration = reducedMotion ? 80 : 1300;
+        const startTime = performance.now();
+        const suffixNode = el.querySelector("span");
 
-        const tick = (now) => {
-          const progress = Math.min((now - start) / duration, 1);
-          const ease = 1 - Math.pow(1 - progress, 3);
-          el.firstChild.textContent = Math.floor(target * ease).toLocaleString("ru-RU");
-          if (progress < 1) {
-            requestAnimationFrame(tick);
+        const animate = (now) => {
+          const progress = clamp((now - startTime) / duration, 0, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const value = Math.round(target * eased).toLocaleString("ru-RU");
+          if (suffixNode) {
+            el.firstChild.textContent = value;
+          } else {
+            el.textContent = value;
           }
+          if (progress < 1) requestAnimationFrame(animate);
         };
 
-        requestAnimationFrame(tick);
+        requestAnimationFrame(animate);
         observer.unobserve(el);
       });
     },
-    { threshold: 0.55 }
+    { threshold: 0.45 }
   );
 
   counters.forEach((counter) => observer.observe(counter));
-}
-
-function initSectionAnimations() {
-  if (reducedMotion || typeof gsap === "undefined") return;
-  gsap.registerPlugin(ScrollTrigger);
-
-  gsap.utils.toArray(".panel").forEach((panel) => {
-    const items = panel.querySelectorAll("h2, h3, p, .glass, .kpi-card, .chart-card, .stat-card, .timeline-item");
-    gsap.from(items, {
-      opacity: 0,
-      y: 30,
-      stagger: 0.06,
-      duration: 0.8,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: panel,
-        start: "top 75%",
-      },
-    });
-  });
 }
 
 function baseChartOptions() {
@@ -93,133 +132,165 @@ function baseChartOptions() {
     plugins: {
       legend: {
         labels: {
-          color: "#d7e4f1",
-          font: {
-            family: "Sora",
-          },
+          color: "#d7e6f5",
+          font: { family: "Manrope" },
         },
       },
       tooltip: {
-        backgroundColor: "rgba(5, 20, 35, 0.95)",
-        borderColor: "rgba(255,255,255,0.14)",
+        backgroundColor: "rgba(5, 19, 34, 0.95)",
+        titleColor: "#fff3e5",
+        bodyColor: "#d8e8f7",
+        borderColor: "rgba(255,255,255,0.16)",
         borderWidth: 1,
-        titleColor: "#fff7ec",
-        bodyColor: "#d4e4f1",
       },
     },
     scales: {
       x: {
-        ticks: { color: "#bdd0e2", font: { family: "Sora" } },
-        grid: { color: "rgba(189,208,226,0.14)" },
+        ticks: { color: "#c1d4e8", font: { family: "Manrope" } },
+        grid: { color: "rgba(193, 212, 232, 0.14)" },
       },
       y: {
-        ticks: { color: "#bdd0e2", font: { family: "Sora" } },
-        grid: { color: "rgba(189,208,226,0.14)" },
+        ticks: { color: "#c1d4e8", font: { family: "Manrope" } },
+        grid: { color: "rgba(193, 212, 232, 0.14)" },
       },
     },
   };
 }
 
-function initCharts() {
+function renderCharts() {
   if (typeof Chart === "undefined") return;
 
-  new Chart(document.getElementById("reportsChart"), {
-    type: "bar",
-    data: {
-      labels: ["Авг", "Сен", "Окт", "Ноя", "Дек", "Янв", "Фев"],
-      datasets: [
-        {
-          label: "Отчеты",
-          data: [12, 16, 19, 24, 31, 38, 46],
-          borderRadius: 7,
-          backgroundColor: ["#4fc3b4", "#57c9b2", "#63cfb0", "#79d5a4", "#8fdb98", "#a5e08f", "#bfdc89"],
-        },
-      ],
-    },
-    options: baseChartOptions(),
-  });
-
-  new Chart(document.getElementById("callsChart"), {
-    type: "line",
-    data: {
-      labels: ["Авг", "Сен", "Окт", "Ноя", "Дек", "Янв", "Фев"],
-      datasets: [
-        {
-          label: "Часы созвонов",
-          data: [18, 24, 35, 42, 48, 63, 82],
-          borderColor: "#ffb76a",
-          backgroundColor: "rgba(255, 183, 106, 0.2)",
-          fill: true,
-          tension: 0.35,
-          pointRadius: 3,
-          pointBackgroundColor: "#ffe2be",
-        },
-      ],
-    },
-    options: baseChartOptions(),
-  });
-
-  new Chart(document.getElementById("focusChart"), {
-    type: "doughnut",
-    data: {
-      labels: ["Дашборды", "SQL/ETL", "Проверка качества", "Коммуникация", "Ad-hoc анализ"],
-      datasets: [
-        {
-          data: [31, 27, 16, 14, 12],
-          backgroundColor: ["#43c6ac", "#f7bb7e", "#59a6e8", "#ec8e73", "#91d66f"],
-          borderWidth: 0,
-        },
-      ],
-    },
-    options: {
-      ...baseChartOptions(),
-      scales: {},
-      cutout: "66%",
-    },
-  });
-
-  new Chart(document.getElementById("skillsChart"), {
-    type: "radar",
-    data: {
-      labels: ["SQL", "BI Viz", "Data Modeling", "Storytelling", "Product Sense", "Automation"],
-      datasets: [
-        {
-          label: "До",
-          data: [22, 28, 18, 30, 34, 16],
-          borderColor: "rgba(160, 183, 201, 0.85)",
-          backgroundColor: "rgba(160, 183, 201, 0.16)",
-          pointBackgroundColor: "#c5d6e8",
-        },
-        {
-          label: "Сейчас",
-          data: [84, 88, 79, 86, 80, 76],
-          borderColor: "#ffb76a",
-          backgroundColor: "rgba(255, 183, 106, 0.23)",
-          pointBackgroundColor: "#ffdcb8",
-        },
-      ],
-    },
-    options: {
-      ...baseChartOptions(),
-      scales: {
-        r: {
-          angleLines: { color: "rgba(189,208,226,0.16)" },
-          grid: { color: "rgba(189,208,226,0.2)" },
-          pointLabels: { color: "#d8e6f3", font: { family: "Sora" } },
-          ticks: {
-            color: "#abc0d4",
-            backdropColor: "rgba(0,0,0,0)",
-            stepSize: 20,
+  const reports = document.getElementById("reportsChart");
+  if (reports) {
+    new Chart(reports, {
+      type: "bar",
+      data: {
+        labels: ["Авг", "Сен", "Окт", "Ноя", "Дек", "Янв", "Фев"],
+        datasets: [
+          {
+            label: "Выполненные отчеты",
+            data: [12, 16, 21, 27, 31, 37, 42],
+            borderRadius: 8,
+            backgroundColor: ["#59c8b7", "#64cdb6", "#72d2b1", "#84d7a8", "#97dc9e", "#abdf93", "#bddf8b"],
           },
-          suggestedMin: 0,
-          suggestedMax: 100,
+        ],
+      },
+      options: baseChartOptions(),
+    });
+  }
+
+  const meetings = document.getElementById("meetingsChart");
+  if (meetings) {
+    new Chart(meetings, {
+      type: "line",
+      data: {
+        labels: ["Авг", "Сен", "Окт", "Ноя", "Дек", "Янв", "Фев"],
+        datasets: [
+          {
+            label: "Часы созвонов",
+            data: [18, 24, 33, 41, 49, 63, 84],
+            borderColor: "#ffbd76",
+            backgroundColor: "rgba(255, 189, 118, 0.23)",
+            pointBackgroundColor: "#ffe2be",
+            pointRadius: 3,
+            fill: true,
+            tension: 0.35,
+          },
+        ],
+      },
+      options: baseChartOptions(),
+    });
+  }
+
+  const focus = document.getElementById("focusChart");
+  if (focus) {
+    new Chart(focus, {
+      type: "doughnut",
+      data: {
+        labels: ["Dashboard Dev", "SQL/ETL", "Анализ гипотез", "Коммуникация"],
+        datasets: [
+          {
+            data: [34, 29, 21, 16],
+            backgroundColor: ["#43c0ad", "#f7bc7f", "#69aae9", "#97d874"],
+            borderWidth: 0,
+          },
+        ],
+      },
+      options: {
+        ...baseChartOptions(),
+        scales: {},
+        cutout: "65%",
+      },
+    });
+  }
+
+  const automation = document.getElementById("automationChart");
+  if (automation) {
+    new Chart(automation, {
+      type: "line",
+      data: {
+        labels: ["Спринт 1", "Спринт 2", "Спринт 3", "Спринт 4", "Спринт 5"],
+        datasets: [
+          {
+            label: "Автоматизированные отчеты, %",
+            data: [26, 39, 51, 66, 74],
+            borderColor: "#59c8b7",
+            backgroundColor: "rgba(89, 200, 183, 0.19)",
+            fill: true,
+            tension: 0.34,
+            pointBackgroundColor: "#bdf0e9",
+          },
+        ],
+      },
+      options: baseChartOptions(),
+    });
+  }
+
+  const skills = document.getElementById("skillsChart");
+  if (skills) {
+    new Chart(skills, {
+      type: "radar",
+      data: {
+        labels: ["SQL", "BI Viz", "Data Modeling", "Storytelling", "Product Sense", "Automation"],
+        datasets: [
+          {
+            label: "До",
+            data: [20, 28, 16, 31, 35, 18],
+            borderColor: "rgba(159, 181, 202, 0.88)",
+            backgroundColor: "rgba(159, 181, 202, 0.17)",
+            pointBackgroundColor: "#c4d4e6",
+          },
+          {
+            label: "Сейчас",
+            data: [86, 91, 82, 88, 84, 79],
+            borderColor: "#ffbe78",
+            backgroundColor: "rgba(255, 190, 120, 0.25)",
+            pointBackgroundColor: "#ffd9ad",
+          },
+        ],
+      },
+      options: {
+        ...baseChartOptions(),
+        scales: {
+          r: {
+            angleLines: { color: "rgba(190, 210, 228, 0.2)" },
+            grid: { color: "rgba(190, 210, 228, 0.2)" },
+            pointLabels: { color: "#d5e5f5", font: { family: "Manrope" } },
+            ticks: {
+              color: "#b0c5db",
+              backdropColor: "rgba(0,0,0,0)",
+              stepSize: 20,
+            },
+            suggestedMin: 0,
+            suggestedMax: 100,
+          },
         },
       },
-    },
-  });
+    });
+  }
 }
 
-updateRouteProgress();
-animateCounters();
-initSectionAnimations();
-initCharts();
+setupMountainRoute();
+setupStepsHighlight();
+setupCounters();
+renderCharts();
