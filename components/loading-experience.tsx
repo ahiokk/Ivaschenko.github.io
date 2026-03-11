@@ -1,0 +1,56 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+
+export default function LoadingExperience() {
+  const [progress, setProgress] = useState(0);
+  const [completed, setCompleted] = useState(false);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const start = performance.now();
+    const duration = 1200;
+
+    let raf = 0;
+    const loop = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setProgress(Math.round(eased * 100));
+      if (t < 1) {
+        raf = requestAnimationFrame(loop);
+      } else {
+        setCompleted(true);
+      }
+    };
+
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[80] flex items-center justify-center bg-[#060910]"
+      initial={{ opacity: 1 }}
+      animate={completed ? { opacity: 0 } : { opacity: 1 }}
+      transition={{ duration: 0.7, ease: [0.21, 1, 0.32, 1] }}
+      onAnimationComplete={() => {
+        if (completed) setVisible(false);
+      }}
+    >
+      <div className="w-[min(420px,88vw)]">
+        <p className="section-kicker text-center">Initializing Structural Narrative</p>
+        <p className="mt-4 text-center font-mono text-sm text-slate-300">{progress}%</p>
+        <div className="mt-4 h-[2px] overflow-hidden rounded-full bg-white/10">
+          <motion.div
+            className="h-full bg-gradient-to-r from-slate-300/40 via-blue-200/90 to-slate-300/40"
+            animate={{ width: `${progress}%` }}
+            transition={{ ease: "easeOut" }}
+          />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
