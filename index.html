@@ -3,213 +3,248 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BI Mountain | Путь Иващенко</title>
-  <meta name="description" content="Визуальная история роста BI-аналитика: 8 точек восхождения от первого дня в компании до вершины.">
+  <title>BI Ascent | Journey</title>
+  <meta name="description" content="Параллакс-восхождение BI-аналитика: город, горы, 8 этапов роста, дашборды и финиш на вершине.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="bg-sky"></div>
-  <div class="bg-light"></div>
-  <div class="bg-grain"></div>
-
   <main>
-    <header class="hero" id="top">
-      <p class="hero-label">BI ASCENT STORY</p>
-      <h1>Мой путь будущего BI-аналитика: <span>восхождение на вершину данных</span></h1>
-      <p class="hero-text">
-        Я начала с хаотичных таблиц в новой компании, а пришла к системе, где данные помогают принимать решения быстро и точно.
-        Листайте вниз: мы буквально поднимаемся по горе, проходя 8 ключевых точек.
+    <header class="intro" id="top">
+      <p class="intro-kicker">PARALLAX BI STORY</p>
+      <h1>От первых дней в компании до вершины <span>BI-аналитики</span></h1>
+      <p class="intro-text">
+        Здесь мы идем по живому маршруту: дома и город остаются внизу, впереди горный подъем, а по дороге - мои ключевые этапы,
+        дашборды и метрики. Скролл действительно двигает сцену.
       </p>
-      <div class="hero-metrics">
-        <article class="metric">
+      <div class="intro-metrics">
+        <article class="metric-card">
           <p class="metric-value count-up" data-target="8">0</p>
-          <p class="metric-caption">этапов восхождения</p>
+          <p class="metric-label">ключевых точек</p>
         </article>
-        <article class="metric">
+        <article class="metric-card">
           <p class="metric-value count-up" data-target="186">0</p>
-          <p class="metric-caption">собранных отчетов</p>
+          <p class="metric-label">выполненных отчетов</p>
         </article>
-        <article class="metric">
+        <article class="metric-card">
           <p class="metric-value count-up" data-target="312">0</p>
-          <p class="metric-caption">часов рабочих созвонов</p>
+          <p class="metric-label">часов созвонов</p>
         </article>
       </div>
     </header>
 
-    <section class="journey" id="journey">
-      <div class="journey-grid">
-        <aside class="mountain-column">
-          <div class="mountain-sticky">
-            <div class="altimeter">
-              <p class="altimeter-label">Текущая высота</p>
-              <p class="altimeter-value"><span id="altitudeMeter">450</span> м</p>
+    <section class="ascent" id="ascent">
+      <div class="scene-column">
+        <div class="scene-sticky">
+          <div class="scene-hud">
+            <div class="hud-item">
+              <p class="hud-label">Высота</p>
+              <p class="hud-value"><span id="altitudeMeter">520</span> м</p>
             </div>
-
-            <div class="mountain-scene">
-              <svg class="mountain-svg" id="mountainSvg" viewBox="0 0 820 1220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-                <defs>
-                  <linearGradient id="mountainFill" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#3e5f86"></stop>
-                    <stop offset="48%" stop-color="#233d5f"></stop>
-                    <stop offset="100%" stop-color="#15283f"></stop>
-                  </linearGradient>
-                  <linearGradient id="ridgeFill" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#5f7a9b"></stop>
-                    <stop offset="100%" stop-color="#263f5d"></stop>
-                  </linearGradient>
-                  <linearGradient id="snowFill" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#f8fbff"></stop>
-                    <stop offset="100%" stop-color="#dbe8f6"></stop>
-                  </linearGradient>
-                </defs>
-
-                <path class="mountain-body" d="M80 1160 L230 860 L320 950 L430 700 L500 780 L650 360 L720 460 L790 260 L790 1160 Z"></path>
-                <path class="mountain-ridge" d="M80 1160 L250 840 L330 930 L440 680 L510 760 L655 345 L730 455 L790 260"></path>
-                <path class="mountain-shadow" d="M320 950 L430 700 L500 780 L650 360 L720 460 L790 260 L790 1160 L320 1160 Z"></path>
-                <path class="snow-cap" d="M650 360 L690 402 L720 460 L750 410 L790 260 L733 318 Z"></path>
-
-                <path id="routeBase" d="M130 1080 C 165 1030, 205 1010, 220 960 C 235 905, 170 885, 210 840 C 245 785, 315 780, 330 730 C 350 665, 380 640, 410 600 C 440 560, 470 540, 500 500 C 530 460, 530 390, 560 350 C 595 300, 625 220, 660 170"></path>
-                <path id="routeProgress" d="M130 1080 C 165 1030, 205 1010, 220 960 C 235 905, 170 885, 210 840 C 245 785, 315 780, 330 730 C 350 665, 380 640, 410 600 C 440 560, 470 540, 500 500 C 530 460, 530 390, 560 350 C 595 300, 625 220, 660 170"></path>
-
-                <circle class="checkpoint-dot" data-step="1" cx="130" cy="1080" r="10"></circle>
-                <circle class="checkpoint-dot" data-step="2" cx="220" cy="960" r="10"></circle>
-                <circle class="checkpoint-dot" data-step="3" cx="210" cy="840" r="10"></circle>
-                <circle class="checkpoint-dot" data-step="4" cx="330" cy="730" r="10"></circle>
-                <circle class="checkpoint-dot" data-step="5" cx="410" cy="600" r="10"></circle>
-                <circle class="checkpoint-dot" data-step="6" cx="500" cy="500" r="10"></circle>
-                <circle class="checkpoint-dot" data-step="7" cx="560" cy="350" r="10"></circle>
-                <circle class="checkpoint-dot" data-step="8" cx="660" cy="170" r="11"></circle>
-
-                <text class="summit-label" x="678" y="140">SUMMIT</text>
-              </svg>
-              <div class="climber" id="climber" aria-hidden="true"></div>
+            <div class="hud-item">
+              <p class="hud-label">Этап</p>
+              <p class="hud-value" id="stageMeter">Базовый лагерь</p>
             </div>
           </div>
-        </aside>
 
-        <div class="steps-column">
-          <article class="step-card active" data-step="1" data-alt="450">
-            <p class="step-id">Точка 1 / Базовый лагерь</p>
-            <h2>Я пришла в компанию junior-специалистом</h2>
-            <p>
-              Первый день, новые команды, много таблиц и вопросов. Я быстро поняла, что в компании много данных,
-              но мало единой структуры, а значит - огромная зона роста.
-            </p>
-          </article>
+          <div class="scene-frame" id="sceneFrame">
+            <div class="scene-layer sky-layer"></div>
+            <div class="scene-layer glow-layer"></div>
 
-          <article class="step-card" data-step="2" data-alt="780">
-            <p class="step-id">Точка 2 / Первая сложность</p>
-            <h2>Обнаружила хаос в отчетности</h2>
-            <p>
-              Отчеты расходились по цифрам, логика метрик отличалась от отдела к отделу.
-              На созвонах обсуждали не решения, а попытки договориться о том, какая цифра "правильная".
-            </p>
-            <ul>
-              <li>9 разрозненных источников данных</li>
-              <li>68% времени уходило на ручные сверки</li>
-              <li>нет единой витрины KPI</li>
-            </ul>
-          </article>
+            <svg class="scene-layer parallax-layer cloud-layer" id="cloudBack" data-tx="-80" data-ty="18" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true">
+              <ellipse cx="160" cy="110" rx="92" ry="36"></ellipse>
+              <ellipse cx="220" cy="100" rx="72" ry="28"></ellipse>
+              <ellipse cx="710" cy="145" rx="102" ry="34"></ellipse>
+              <ellipse cx="820" cy="130" rx="80" ry="26"></ellipse>
+            </svg>
 
-          <article class="step-card" data-step="3" data-alt="1160">
-            <p class="step-id">Точка 3 / Опора</p>
-            <h2>Собрала единый словарь метрик</h2>
-            <p>
-              Начала с базы: definitions, правила расчета, owners по каждому KPI.
-              Это снизило споры, ускорило обсуждения и стало фундаментом для будущих дашбордов.
-            </p>
-            <div class="badge-row">
-              <span>Data Glossary</span>
-              <span>Metric Logic</span>
-              <span>Single Source of Truth</span>
-            </div>
-          </article>
+            <svg class="scene-layer parallax-layer mountain-back" id="mountainBack" data-tx="12" data-ty="-48" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 700 L0 390 L120 300 L240 360 L370 250 L520 360 L680 220 L790 310 L920 210 L1000 280 L1000 700 Z"></path>
+            </svg>
 
-          <article class="step-card" data-step="4" data-alt="1550">
-            <p class="step-id">Точка 4 / Рывок</p>
-            <h2>Автоматизировала SQL-витрины и рост отчетов</h2>
-            <p>
-              Внедрила регулярные SQL-пайплайны и сократила ручную подготовку. Команда начала получать отчеты
-              быстрее и стабильнее каждую неделю.
-            </p>
-            <div class="chart-shell">
-              <canvas id="reportsChart"></canvas>
-            </div>
-          </article>
+            <svg class="scene-layer parallax-layer city-back" id="cityBack" data-tx="-16" data-ty="72" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true">
+              <rect x="38" y="460" width="72" height="180" rx="4"></rect>
+              <rect x="122" y="428" width="58" height="212" rx="4"></rect>
+              <rect x="196" y="442" width="80" height="198" rx="4"></rect>
+              <rect x="290" y="408" width="66" height="232" rx="4"></rect>
+              <rect x="370" y="450" width="72" height="190" rx="4"></rect>
+              <rect x="456" y="396" width="92" height="244" rx="4"></rect>
+              <rect x="566" y="438" width="70" height="202" rx="4"></rect>
+              <rect x="650" y="410" width="84" height="230" rx="4"></rect>
+              <rect x="750" y="452" width="76" height="188" rx="4"></rect>
+              <rect x="842" y="430" width="94" height="210" rx="4"></rect>
+            </svg>
 
-          <article class="step-card" data-step="5" data-alt="1980">
-            <p class="step-id">Точка 5 / Командная высота</p>
-            <h2>Синхронизировала продукт, маркетинг и операции</h2>
-            <p>
-              Много времени ушло на созвоны со стейкхолдерами: собирали требования, проверяли гипотезы,
-              согласовывали интерпретацию данных.
-            </p>
-            <div class="chart-shell">
-              <canvas id="meetingsChart"></canvas>
-            </div>
-          </article>
+            <svg class="scene-layer parallax-layer mountain-mid" id="mountainMid" data-tx="18" data-ty="-78" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 700 L0 520 L110 448 L220 506 L300 428 L410 474 L520 360 L608 420 L726 280 L818 360 L918 236 L1000 278 L1000 700 Z"></path>
+            </svg>
 
-          <article class="step-card" data-step="6" data-alt="2350">
-            <p class="step-id">Точка 6 / Первый пик</p>
-            <h2>Запустила первую линейку BI-дашбордов</h2>
-            <p>
-              Сделала несколько экранов для руководства и команд: операционные KPI, продуктовые метрики и блок ad-hoc анализа.
-              Дашборды перестали быть "красивой картинкой" и стали рабочим инструментом.
-            </p>
-            <div class="chart-shell">
-              <canvas id="focusChart"></canvas>
-            </div>
-          </article>
+            <svg class="scene-layer parallax-layer city-front" id="cityFront" data-tx="-24" data-ty="126" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 700 L0 598 L58 568 L84 568 L84 520 L142 520 L142 574 L206 574 L206 536 L264 536 L264 598 L332 598 L332 550 L404 550 L404 598 L478 598 L478 530 L560 530 L560 598 L640 598 L640 548 L708 548 L708 598 L790 598 L790 526 L864 526 L864 598 L932 598 L932 556 L1000 556 L1000 700 Z"></path>
+              <path class="roof-line" d="M0 598 L58 568 L84 568 L84 520 L142 520 L142 574 L206 574 L206 536 L264 536 L264 598 L332 598 L332 550 L404 550 L404 598 L478 598 L478 530 L560 530 L560 598 L640 598 L640 548 L708 548 L708 598 L790 598 L790 526 L864 526 L864 598 L932 598 L932 556 L1000 556"></path>
+              <rect class="window" x="104" y="550" width="12" height="14"></rect>
+              <rect class="window" x="232" y="564" width="12" height="14"></rect>
+              <rect class="window" x="364" y="566" width="12" height="14"></rect>
+              <rect class="window" x="520" y="560" width="12" height="14"></rect>
+              <rect class="window" x="678" y="562" width="12" height="14"></rect>
+              <rect class="window" x="824" y="554" width="12" height="14"></rect>
+            </svg>
 
-          <article class="step-card" data-step="7" data-alt="2730">
-            <p class="step-id">Точка 7 / Предвершинный участок</p>
-            <h2>Вывела качество данных и автоматизацию на новый уровень</h2>
-            <p>
-              Добавила проверки на аномалии, контроль задержек, обновления по расписанию и контроль качества витрин.
-              Ошибки начали отлавливаться до того, как попадали в бизнес-отчеты.
-            </p>
-            <div class="chart-shell">
-              <canvas id="automationChart"></canvas>
-            </div>
-          </article>
+            <svg class="scene-layer parallax-layer train-layer" id="trainLayer" data-tx="-46" data-ty="134" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true">
+              <rect class="rail" x="0" y="628" width="1000" height="6"></rect>
+              <g id="trainGroup">
+                <rect class="train-body" x="86" y="592" width="152" height="28" rx="6"></rect>
+                <rect class="train-body" x="244" y="596" width="112" height="24" rx="5"></rect>
+                <rect class="train-window" x="104" y="600" width="22" height="11" rx="2"></rect>
+                <rect class="train-window" x="134" y="600" width="22" height="11" rx="2"></rect>
+                <rect class="train-window" x="164" y="600" width="22" height="11" rx="2"></rect>
+                <rect class="train-window" x="194" y="600" width="22" height="11" rx="2"></rect>
+                <circle class="train-wheel" cx="122" cy="624" r="6"></circle>
+                <circle class="train-wheel" cx="198" cy="624" r="6"></circle>
+                <circle class="train-wheel" cx="274" cy="624" r="6"></circle>
+                <circle class="train-wheel" cx="332" cy="624" r="6"></circle>
+              </g>
+            </svg>
 
-          <article class="step-card" data-step="8" data-alt="3100">
-            <p class="step-id">Точка 8 / Финиш</p>
-            <h2>Сейчас я строю BI как систему принятия решений</h2>
-            <p>
-              Я соединяю бизнес-контекст и данные: от постановки вопроса до финального вывода на дашборде.
-              Моя ценность - превращать разрозненные цифры в понятные и полезные решения.
-            </p>
-          </article>
+            <svg class="scene-layer route-layer" id="routeSvg" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true">
+              <path id="routeBase" d="M120 620 C 180 578, 210 565, 250 530 C 294 494, 325 478, 360 430 C 390 392, 420 362, 450 340 C 480 316, 508 296, 540 270 C 568 248, 596 236, 620 220 C 648 200, 674 180, 700 160 C 740 130, 774 110, 820 88"></path>
+              <path id="routeProgress" d="M120 620 C 180 578, 210 565, 250 530 C 294 494, 325 478, 360 430 C 390 392, 420 362, 450 340 C 480 316, 508 296, 540 270 C 568 248, 596 236, 620 220 C 648 200, 674 180, 700 160 C 740 130, 774 110, 820 88"></path>
+
+              <circle class="checkpoint-dot" data-step="1" cx="120" cy="620" r="8"></circle>
+              <circle class="checkpoint-dot" data-step="2" cx="250" cy="530" r="8"></circle>
+              <circle class="checkpoint-dot" data-step="3" cx="360" cy="430" r="8"></circle>
+              <circle class="checkpoint-dot" data-step="4" cx="450" cy="340" r="8"></circle>
+              <circle class="checkpoint-dot" data-step="5" cx="540" cy="270" r="8"></circle>
+              <circle class="checkpoint-dot" data-step="6" cx="620" cy="220" r="8"></circle>
+              <circle class="checkpoint-dot" data-step="7" cx="700" cy="160" r="8"></circle>
+              <circle class="checkpoint-dot summit-dot" data-step="8" cx="820" cy="88" r="10"></circle>
+              <path class="summit-flag" d="M834 115 L834 52 L874 64 L834 76"></path>
+            </svg>
+
+            <div class="climber" id="climber" aria-hidden="true"></div>
+          </div>
         </div>
+      </div>
+
+      <div class="story-column">
+        <article class="story-step is-active" data-step="1" data-alt="520" data-label="Базовый лагерь">
+          <p class="step-tag">Точка 1</p>
+          <h2>Я пришла в компанию как junior-аналитик</h2>
+          <p>
+            Старт был в живом операционном контексте: много файлов, быстрые задачи, разные ожидания команд.
+            Я увидела, что данных много, но системе не хватает единой структуры.
+          </p>
+        </article>
+
+        <article class="story-step" data-step="2" data-alt="860" data-label="Хаос данных">
+          <p class="step-tag">Точка 2</p>
+          <h2>Первое открытие: отчеты конфликтовали друг с другом</h2>
+          <p>
+            Маркетинг, продукт и операции жили в разных таблицах и определениях KPI.
+            На встречах уходило время не на решения, а на проверку источников.
+          </p>
+          <ul>
+            <li>9 источников без синхронизации</li>
+            <li>68% времени на ручную сводку</li>
+            <li>метрики считались по-разному</li>
+          </ul>
+        </article>
+
+        <article class="story-step" data-step="3" data-alt="1180" data-label="Единый словарь">
+          <p class="step-tag">Точка 3</p>
+          <h2>Собрала единый словарь метрик и правила расчета</h2>
+          <p>
+            Ввела KPI glossary, источники и владельцев показателей. Это резко снизило спорные трактовки
+            и стало опорой для автоматизации отчетности.
+          </p>
+          <div class="chip-row">
+            <span>Data Glossary</span>
+            <span>KPI Ownership</span>
+            <span>Single Source of Truth</span>
+          </div>
+        </article>
+
+        <article class="story-step" data-step="4" data-alt="1570" data-label="SQL-рывок">
+          <p class="step-tag">Точка 4</p>
+          <h2>Запустила SQL-витрины и ускорила выпуск отчетов</h2>
+          <p>
+            Перевела повторяющиеся расчеты в SQL, убрала ручные промежуточные шаги и стабилизировала ритм weekly-reporting.
+          </p>
+          <div class="chart-shell">
+            <canvas id="reportsChart"></canvas>
+          </div>
+        </article>
+
+        <article class="story-step" data-step="5" data-alt="2010" data-label="Синхрон с бизнесом">
+          <p class="step-tag">Точка 5</p>
+          <h2>Выстроила плотную коммуникацию со стейкхолдерами</h2>
+          <p>
+            Созвоны перестали быть хаотичными: появились регулярные review-сессии, одно окно по статусам и понятные action points.
+          </p>
+          <div class="chart-shell">
+            <canvas id="meetingsChart"></canvas>
+          </div>
+        </article>
+
+        <article class="story-step" data-step="6" data-alt="2380" data-label="Дашборды в проде">
+          <p class="step-tag">Точка 6</p>
+          <h2>Собрала линейку рабочих BI-дашбордов</h2>
+          <p>
+            Сделала экраны для руководства и команд: операционные KPI, продуктовые метрики и ad-hoc блоки анализа.
+            Дашборды стали основой еженедельных решений.
+          </p>
+          <div class="chart-shell">
+            <canvas id="focusChart"></canvas>
+          </div>
+        </article>
+
+        <article class="story-step" data-step="7" data-alt="2770" data-label="Data Quality">
+          <p class="step-tag">Точка 7</p>
+          <h2>Подняла качество данных и автоматизацию контроля</h2>
+          <p>
+            Добавила алерты на аномалии, проверки SLA обновлений и контроль качества витрин.
+            Ошибки начали ловиться до попадания в управленческие отчеты.
+          </p>
+          <div class="chart-shell">
+            <canvas id="automationChart"></canvas>
+          </div>
+        </article>
+
+        <article class="story-step" data-step="8" data-alt="3100" data-label="Финиш">
+          <p class="step-tag">Точка 8</p>
+          <h2>Сейчас я строю BI как систему принятия решений</h2>
+          <p>
+            Я соединяю бизнес-вопросы, качество данных и визуализацию в единый цикл: от гипотезы до решения.
+            Это мой текущий финиш и фундамент для следующего уровня.
+          </p>
+        </article>
       </div>
     </section>
 
-    <section class="finale" id="finale">
-      <p class="finale-label">SUMMIT RESULT</p>
-      <h2>Что на вершине сегодня</h2>
-      <div class="finale-grid">
-        <article class="finale-card">
-          <p class="finale-kpi-title">Отчеты без ручной сборки</p>
-          <p class="finale-kpi count-up" data-target="74">0<span>%</span></p>
-          <p class="finale-kpi-note">автоматизировано</p>
+    <section class="summit" id="summit">
+      <p class="summit-kicker">FINAL STATS</p>
+      <h2>Что я имею на вершине</h2>
+      <div class="summit-grid">
+        <article class="summit-card">
+          <p class="summit-title">Автоматизация отчетов</p>
+          <p class="summit-value count-up" data-target="74">0<span>%</span></p>
+          <p class="summit-note">ручной труд сокращен</p>
         </article>
-        <article class="finale-card">
-          <p class="finale-kpi-title">Доверие команды к цифрам</p>
-          <p class="finale-kpi count-up" data-target="91">0<span>%</span></p>
-          <p class="finale-kpi-note">по внутренней оценке</p>
+        <article class="summit-card">
+          <p class="summit-title">Доверие к данным</p>
+          <p class="summit-value count-up" data-target="91">0<span>%</span></p>
+          <p class="summit-note">по оценке команд</p>
         </article>
-        <article class="finale-card finale-chart">
+        <article class="summit-card summit-wide">
           <h3>Рост компетенций: до и после</h3>
           <div class="chart-shell">
             <canvas id="skillsChart"></canvas>
           </div>
         </article>
       </div>
-      <a class="back-link" href="#top">Пройти восхождение снова</a>
+      <a class="restart-link" href="#top">Пройти маршрут снова</a>
     </section>
   </main>
 

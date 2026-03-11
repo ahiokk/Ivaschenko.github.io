@@ -4,87 +4,118 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
-function setupMountainRoute() {
-  const journey = document.getElementById("journey");
+function setupParallaxAscent() {
+  const ascent = document.getElementById("ascent");
+  const layers = Array.from(document.querySelectorAll(".parallax-layer"));
   const routeBase = document.getElementById("routeBase");
   const routeProgress = document.getElementById("routeProgress");
+  const routeSvg = document.getElementById("routeSvg");
   const climber = document.getElementById("climber");
-  const mountainSvg = document.getElementById("mountainSvg");
+  const dots = Array.from(document.querySelectorAll(".checkpoint-dot"));
+  const steps = Array.from(document.querySelectorAll(".story-step"));
   const altitudeMeter = document.getElementById("altitudeMeter");
+  const stageMeter = document.getElementById("stageMeter");
+  const trainGroup = document.getElementById("trainGroup");
+  const cityBack = document.getElementById("cityBack");
+  const cityFront = document.getElementById("cityFront");
+  const cloudBack = document.getElementById("cloudBack");
 
-  if (!journey || !routeBase || !routeProgress || !climber || !mountainSvg || !altitudeMeter) return;
+  if (!ascent || !routeBase || !routeProgress || !routeSvg || !climber || !steps.length) return;
 
   const routeLength = routeBase.getTotalLength();
   routeProgress.style.strokeDasharray = String(routeLength);
   routeProgress.style.strokeDashoffset = String(routeLength);
+  const viewBox = routeSvg.viewBox.baseVal;
 
-  const viewBox = mountainSvg.viewBox.baseVal;
-  const minAltitude = 450;
-  const maxAltitude = 3100;
+  let activeIndex = -1;
 
-  const updateProgress = () => {
-    const rect = journey.getBoundingClientRect();
-    const startLine = window.innerHeight * 0.2;
-    const endLine = window.innerHeight * 0.82;
-    const track = rect.height + startLine - endLine;
-    const progress = clamp((startLine - rect.top) / track, 0, 1);
-
-    const currentLength = routeLength * progress;
-    routeProgress.style.strokeDashoffset = String(routeLength - currentLength);
-
-    const point = routeBase.getPointAtLength(currentLength);
-    const xPercent = (point.x / viewBox.width) * 100;
-    const yPercent = (point.y / viewBox.height) * 100;
-    climber.style.left = `${xPercent}%`;
-    climber.style.top = `${yPercent}%`;
-
-    const altitude = Math.round(minAltitude + (maxAltitude - minAltitude) * progress);
-    altitudeMeter.textContent = altitude.toLocaleString("ru-RU");
+  const getProgress = () => {
+    const rect = ascent.getBoundingClientRect();
+    const start = window.innerHeight * 0.2;
+    const end = window.innerHeight * 0.82;
+    const track = rect.height + start - end;
+    if (track <= 0) return 0;
+    return clamp((start - rect.top) / track, 0, 1);
   };
 
-  updateProgress();
-  window.addEventListener("scroll", updateProgress, { passive: true });
-  window.addEventListener("resize", updateProgress);
-}
-
-function setupStepsHighlight() {
-  const steps = Array.from(document.querySelectorAll(".step-card"));
-  const dots = Array.from(document.querySelectorAll(".checkpoint-dot"));
-
-  if (!steps.length || !dots.length) return;
-
-  const activate = (index) => {
+  const setActiveStep = (index) => {
+    if (index === activeIndex) return;
+    activeIndex = index;
     steps.forEach((step, stepIndex) => {
-      step.classList.toggle("active", stepIndex === index);
+      step.classList.toggle("is-active", stepIndex === activeIndex);
     });
 
     dots.forEach((dot) => {
-      const dotStep = Number(dot.dataset.step || "0") - 1;
-      dot.classList.toggle("active", dotStep <= index);
+      const dotIndex = Number(dot.dataset.step || "0") - 1;
+      dot.classList.toggle("active", dotIndex <= activeIndex);
     });
+
+    if (stageMeter) {
+      stageMeter.textContent = steps[activeIndex].dataset.label || "Этап";
+    }
   };
 
-  const updateActiveStep = () => {
-    let activeIndex = 0;
-    let bestDistance = Number.POSITIVE_INFINITY;
-    const viewportCenter = window.innerHeight * 0.5;
+  const updateActiveByViewport = () => {
+    const center = window.innerHeight * 0.5;
+    let nearest = 0;
+    let minDist = Number.POSITIVE_INFINITY;
 
     steps.forEach((step, index) => {
       const rect = step.getBoundingClientRect();
-      const center = rect.top + rect.height * 0.5;
-      const distance = Math.abs(viewportCenter - center);
-      if (distance < bestDistance) {
-        bestDistance = distance;
-        activeIndex = index;
+      const stepCenter = rect.top + rect.height * 0.5;
+      const dist = Math.abs(center - stepCenter);
+      if (dist < minDist) {
+        minDist = dist;
+        nearest = index;
       }
     });
 
-    activate(activeIndex);
+    setActiveStep(nearest);
   };
 
-  updateActiveStep();
-  window.addEventListener("scroll", updateActiveStep, { passive: true });
-  window.addEventListener("resize", updateActiveStep);
+  const render = () => {
+    const progress = getProgress();
+
+    layers.forEach((layer) => {
+      const tx = Number(layer.dataset.tx || "0") * progress;
+      const ty = Number(layer.dataset.ty || "0") * progress;
+      layer.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
+    });
+
+    if (cloudBack && !reducedMotion) {
+      const cloudDrift = Math.sin(progress * Math.PI * 2) * 10;
+      cloudBack.style.transform = `translate3d(${-80 * progress + cloudDrift}px, ${18 * progress}px, 0)`;
+    }
+
+    if (cityBack) cityBack.style.opacity = String(clamp(1 - progress * 0.82, 0.15, 1));
+    if (cityFront) cityFront.style.opacity = String(clamp(1 - progress * 1.12, 0.08, 1));
+
+    if (trainGroup) {
+      const travel = (progress * 980) % 980;
+      trainGroup.setAttribute("transform", `translate(${travel - 380}, 0)`);
+    }
+
+    const currentLength = routeLength * progress;
+    routeProgress.style.strokeDashoffset = String(routeLength - currentLength);
+    const point = routeBase.getPointAtLength(currentLength);
+    climber.style.left = `${(point.x / viewBox.width) * 100}%`;
+    climber.style.top = `${(point.y / viewBox.height) * 100}%`;
+
+    if (altitudeMeter) {
+      const altitude = Math.round(520 + (3100 - 520) * progress);
+      altitudeMeter.textContent = altitude.toLocaleString("ru-RU");
+    }
+  };
+
+  const onScroll = () => {
+    updateActiveByViewport();
+    render();
+  };
+
+  updateActiveByViewport();
+  render();
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
 }
 
 function setupCounters() {
@@ -98,23 +129,23 @@ function setupCounters() {
 
         const el = entry.target;
         const target = Number(el.dataset.target || "0");
-        const duration = reducedMotion ? 80 : 1300;
-        const startTime = performance.now();
-        const suffixNode = el.querySelector("span");
+        const duration = reducedMotion ? 120 : 1400;
+        const start = performance.now();
+        const suffix = el.querySelector("span");
 
-        const animate = (now) => {
-          const progress = clamp((now - startTime) / duration, 0, 1);
+        const tick = (now) => {
+          const progress = clamp((now - start) / duration, 0, 1);
           const eased = 1 - Math.pow(1 - progress, 3);
           const value = Math.round(target * eased).toLocaleString("ru-RU");
-          if (suffixNode) {
+          if (suffix) {
             el.firstChild.textContent = value;
           } else {
             el.textContent = value;
           }
-          if (progress < 1) requestAnimationFrame(animate);
+          if (progress < 1) requestAnimationFrame(tick);
         };
 
-        requestAnimationFrame(animate);
+        requestAnimationFrame(tick);
         observer.unobserve(el);
       });
     },
@@ -124,7 +155,7 @@ function setupCounters() {
   counters.forEach((counter) => observer.observe(counter));
 }
 
-function baseChartOptions() {
+function chartOptions() {
   return {
     responsive: true,
     maintainAspectRatio: false,
@@ -132,152 +163,152 @@ function baseChartOptions() {
     plugins: {
       legend: {
         labels: {
-          color: "#d7e6f5",
+          color: "#d9e8f7",
           font: { family: "Manrope" },
         },
       },
       tooltip: {
-        backgroundColor: "rgba(5, 19, 34, 0.95)",
-        titleColor: "#fff3e5",
-        bodyColor: "#d8e8f7",
-        borderColor: "rgba(255,255,255,0.16)",
+        backgroundColor: "rgba(7, 20, 35, 0.96)",
+        titleColor: "#fff4e7",
+        bodyColor: "#d5e7f8",
+        borderColor: "rgba(255,255,255,0.17)",
         borderWidth: 1,
       },
     },
     scales: {
       x: {
-        ticks: { color: "#c1d4e8", font: { family: "Manrope" } },
-        grid: { color: "rgba(193, 212, 232, 0.14)" },
+        ticks: { color: "#c5d9ee", font: { family: "Manrope" } },
+        grid: { color: "rgba(197,217,238,0.14)" },
       },
       y: {
-        ticks: { color: "#c1d4e8", font: { family: "Manrope" } },
-        grid: { color: "rgba(193, 212, 232, 0.14)" },
+        ticks: { color: "#c5d9ee", font: { family: "Manrope" } },
+        grid: { color: "rgba(197,217,238,0.14)" },
       },
     },
   };
 }
 
-function renderCharts() {
+function setupCharts() {
   if (typeof Chart === "undefined") return;
 
-  const reports = document.getElementById("reportsChart");
-  if (reports) {
-    new Chart(reports, {
+  const reportsChart = document.getElementById("reportsChart");
+  if (reportsChart) {
+    new Chart(reportsChart, {
       type: "bar",
       data: {
         labels: ["Авг", "Сен", "Окт", "Ноя", "Дек", "Янв", "Фев"],
         datasets: [
           {
-            label: "Выполненные отчеты",
-            data: [12, 16, 21, 27, 31, 37, 42],
+            label: "Отчеты",
+            data: [12, 16, 23, 29, 34, 39, 43],
             borderRadius: 8,
-            backgroundColor: ["#59c8b7", "#64cdb6", "#72d2b1", "#84d7a8", "#97dc9e", "#abdf93", "#bddf8b"],
+            backgroundColor: ["#59cab8", "#64cfb6", "#73d4b1", "#82d8a8", "#94dc9f", "#aadf94", "#bfdf8b"],
           },
         ],
       },
-      options: baseChartOptions(),
+      options: chartOptions(),
     });
   }
 
-  const meetings = document.getElementById("meetingsChart");
-  if (meetings) {
-    new Chart(meetings, {
+  const meetingsChart = document.getElementById("meetingsChart");
+  if (meetingsChart) {
+    new Chart(meetingsChart, {
       type: "line",
       data: {
         labels: ["Авг", "Сен", "Окт", "Ноя", "Дек", "Янв", "Фев"],
         datasets: [
           {
             label: "Часы созвонов",
-            data: [18, 24, 33, 41, 49, 63, 84],
-            borderColor: "#ffbd76",
-            backgroundColor: "rgba(255, 189, 118, 0.23)",
-            pointBackgroundColor: "#ffe2be",
+            data: [18, 25, 33, 44, 52, 65, 75],
+            borderColor: "#ffbf79",
+            backgroundColor: "rgba(255, 191, 121, 0.23)",
+            pointBackgroundColor: "#ffe0ba",
             pointRadius: 3,
             fill: true,
             tension: 0.35,
           },
         ],
       },
-      options: baseChartOptions(),
+      options: chartOptions(),
     });
   }
 
-  const focus = document.getElementById("focusChart");
-  if (focus) {
-    new Chart(focus, {
+  const focusChart = document.getElementById("focusChart");
+  if (focusChart) {
+    new Chart(focusChart, {
       type: "doughnut",
       data: {
-        labels: ["Dashboard Dev", "SQL/ETL", "Анализ гипотез", "Коммуникация"],
+        labels: ["Dashboard Dev", "SQL/ETL", "Анализ гипотез", "Коммуникация", "Data QA"],
         datasets: [
           {
-            data: [34, 29, 21, 16],
-            backgroundColor: ["#43c0ad", "#f7bc7f", "#69aae9", "#97d874"],
+            data: [30, 27, 19, 14, 10],
+            backgroundColor: ["#55cdb8", "#ffbd7a", "#69afe9", "#f09e7d", "#9adf76"],
             borderWidth: 0,
           },
         ],
       },
       options: {
-        ...baseChartOptions(),
+        ...chartOptions(),
         scales: {},
-        cutout: "65%",
+        cutout: "64%",
       },
     });
   }
 
-  const automation = document.getElementById("automationChart");
-  if (automation) {
-    new Chart(automation, {
+  const automationChart = document.getElementById("automationChart");
+  if (automationChart) {
+    new Chart(automationChart, {
       type: "line",
       data: {
         labels: ["Спринт 1", "Спринт 2", "Спринт 3", "Спринт 4", "Спринт 5"],
         datasets: [
           {
-            label: "Автоматизированные отчеты, %",
-            data: [26, 39, 51, 66, 74],
-            borderColor: "#59c8b7",
-            backgroundColor: "rgba(89, 200, 183, 0.19)",
+            label: "Автоматизация, %",
+            data: [28, 39, 53, 65, 74],
+            borderColor: "#67d8c4",
+            backgroundColor: "rgba(103, 216, 196, 0.22)",
+            pointBackgroundColor: "#ccf6ef",
+            tension: 0.32,
             fill: true,
-            tension: 0.34,
-            pointBackgroundColor: "#bdf0e9",
           },
         ],
       },
-      options: baseChartOptions(),
+      options: chartOptions(),
     });
   }
 
-  const skills = document.getElementById("skillsChart");
-  if (skills) {
-    new Chart(skills, {
+  const skillsChart = document.getElementById("skillsChart");
+  if (skillsChart) {
+    new Chart(skillsChart, {
       type: "radar",
       data: {
-        labels: ["SQL", "BI Viz", "Data Modeling", "Storytelling", "Product Sense", "Automation"],
+        labels: ["SQL", "BI Viz", "Modeling", "Storytelling", "Product Sense", "Automation"],
         datasets: [
           {
             label: "До",
-            data: [20, 28, 16, 31, 35, 18],
-            borderColor: "rgba(159, 181, 202, 0.88)",
-            backgroundColor: "rgba(159, 181, 202, 0.17)",
-            pointBackgroundColor: "#c4d4e6",
+            data: [22, 31, 18, 35, 33, 20],
+            borderColor: "rgba(163, 186, 208, 0.9)",
+            backgroundColor: "rgba(163, 186, 208, 0.18)",
+            pointBackgroundColor: "#c5d8ea",
           },
           {
             label: "Сейчас",
-            data: [86, 91, 82, 88, 84, 79],
-            borderColor: "#ffbe78",
-            backgroundColor: "rgba(255, 190, 120, 0.25)",
-            pointBackgroundColor: "#ffd9ad",
+            data: [86, 90, 83, 89, 84, 79],
+            borderColor: "#ffbf7a",
+            backgroundColor: "rgba(255, 191, 122, 0.24)",
+            pointBackgroundColor: "#ffddb1",
           },
         ],
       },
       options: {
-        ...baseChartOptions(),
+        ...chartOptions(),
         scales: {
           r: {
-            angleLines: { color: "rgba(190, 210, 228, 0.2)" },
-            grid: { color: "rgba(190, 210, 228, 0.2)" },
-            pointLabels: { color: "#d5e5f5", font: { family: "Manrope" } },
+            angleLines: { color: "rgba(190, 212, 232, 0.2)" },
+            grid: { color: "rgba(190, 212, 232, 0.2)" },
+            pointLabels: { color: "#d7e8f8", font: { family: "Manrope" } },
             ticks: {
-              color: "#b0c5db",
+              color: "#b3c9df",
               backdropColor: "rgba(0,0,0,0)",
               stepSize: 20,
             },
@@ -290,7 +321,6 @@ function renderCharts() {
   }
 }
 
-setupMountainRoute();
-setupStepsHighlight();
+setupParallaxAscent();
 setupCounters();
-renderCharts();
+setupCharts();
