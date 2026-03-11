@@ -1,208 +1,228 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useMemo, useRef, useState } from "react";
 import BuildingScene from "@/components/building-scene";
 import GrowthLineChart from "@/components/charts/growth-line-chart";
 import RadarSkillChart from "@/components/charts/radar-skill-chart";
 import SkillBars from "@/components/charts/skill-bars";
 import StageProgress from "@/components/stage-progress";
-import { buildSteps, narrativeMoments } from "@/lib/site-data";
+import { buildSteps, BuildStep } from "@/lib/site-data";
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(Math.max(value, min), max);
 
+const stepNarrative: Record<
+  BuildStep["key"],
+  {
+    title: string;
+    subtitle: string;
+    copy: string;
+    quote: string;
+    panel?: "radar" | "line" | "kpi" | "none";
+  }
+> = {
+  site: {
+    title: "Site Grid",
+    subtitle: "Разметка участка и архитектурный чертеж.",
+    copy: "Начало пути: пустая площадка, структура мышления и ясный план роста.",
+    quote: "Рост начинается с точной разметки."
+  },
+  foundation: {
+    title: "Foundation",
+    subtitle: "База, дисциплина, инженерная системность.",
+    copy: "Сильный фундамент: методика анализа, SQL-мышление, аккуратная работа с источниками данных.",
+    quote: "Сильный результат начинается с правильного фундамента.",
+    panel: "kpi"
+  },
+  columns: {
+    title: "Columns",
+    subtitle: "Первые опорные проекты и практическая устойчивость.",
+    copy: "Появляются первые рабочие кейсы, первые сложные решения и уверенность в реальной среде.",
+    quote: "Я строила себя шаг за шагом."
+  },
+  beams: {
+    title: "Frame Beams",
+    subtitle: "Каркас навыков и техническая уверенность.",
+    copy: "Навыки соединяются в систему: BI, SQL, data modeling и storytelling перестают быть разрозненными.",
+    quote: "Каждый уровень опирается на основание.",
+    panel: "radar"
+  },
+  floors: {
+    title: "Floor Plates",
+    subtitle: "Наращивание зрелых процессов и аналитического покрытия.",
+    copy: "Больше сценариев, больше ответственности, более глубокая связка данных и бизнес-решений.",
+    quote: "Рост — это архитектура, а не случайность."
+  },
+  facade: {
+    title: "Glass Facade",
+    subtitle: "Визуальная прозрачность и доверие к данным.",
+    copy: "Метрики становятся видимыми и понятными для команд, а dashboards — частью ежедневных решений.",
+    quote: "Хорошая аналитика делает сложное прозрачным.",
+    panel: "line"
+  },
+  upper: {
+    title: "Upper Levels",
+    subtitle: "Сложные кейсы и стратегическая глубина.",
+    copy: "На верхних уровнях — мультикомандные задачи, архитектура KPI и зрелая ответственность.",
+    quote: "Чем выше уровень, тем важнее конструкция мышления."
+  },
+  rooftop: {
+    title: "Rooftop",
+    subtitle: "Текущий уровень и следующий горизонт.",
+    copy: "Сейчас я работаю как системный BI-аналитик и готова к следующему уровню сложности.",
+    quote: "Следующая высота — продолжение той же архитектуры."
+  }
+};
+
 export default function StorytellingExperience() {
   const sectionRef = useRef<HTMLElement>(null);
+  const stepRefs = useRef(new Map<BuildStep["key"], HTMLElement>());
   const [progress, setProgress] = useState(0);
+  const [activeKey, setActiveKey] = useState<BuildStep["key"]>("site");
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-    if (!sectionRef.current) return;
+    const onScroll = () => {
+      if (!sectionRef.current) return;
 
-    const trigger = ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: "top top",
-      end: "bottom bottom",
-      scrub: true,
-      onUpdate: (self) => {
-        setProgress(clamp(self.progress));
-      }
-    });
+      const section = sectionRef.current;
+      const absoluteTop = section.getBoundingClientRect().top + window.scrollY;
+      const total = Math.max(section.offsetHeight - window.innerHeight, 1);
+      const raw = (window.scrollY - absoluteTop + window.innerHeight * 0.3) / total;
+      setProgress(clamp(raw));
 
-    return () => trigger.kill();
+      const viewportCenter = window.innerHeight * 0.5;
+      let nearest: BuildStep["key"] = "site";
+      let best = Number.POSITIVE_INFINITY;
+
+      stepRefs.current.forEach((node, key) => {
+        const rect = node.getBoundingClientRect();
+        const center = rect.top + rect.height * 0.5;
+        const dist = Math.abs(center - viewportCenter);
+        if (dist < best) {
+          best = dist;
+          nearest = key;
+        }
+      });
+
+      setActiveKey(nearest);
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
-  const activeStep = useMemo(() => {
-    const sorted = [...buildSteps].sort((a, b) => a.start - b.start);
-    let current = sorted[0];
-    for (const step of sorted) {
-      if (progress >= step.start) current = step;
-    }
-    return current;
-  }, [progress]);
-
-  const activeMoment = useMemo(() => {
-    const sorted = [...narrativeMoments].sort((a, b) => a.start - b.start);
-    let current = sorted[0];
-    for (const moment of sorted) {
-      if (progress >= moment.start) current = moment;
-    }
-    return current;
-  }, [progress]);
+  const activeStep = useMemo(() => buildSteps.find((step) => step.key === activeKey) ?? buildSteps[0], [activeKey]);
 
   return (
-    <section ref={sectionRef} id="experience" className="relative h-[760vh]">
-      {buildSteps.map((step) => (
-        <span key={step.key} id={step.anchor} className="absolute left-0 h-px w-px" style={{ top: `${step.start * 100}%` }} />
-      ))}
+    <section ref={sectionRef} id="story" className="relative pb-14">
+      <StageProgress steps={buildSteps} activeKey={activeKey} progress={progress} />
 
-      <div className="sticky top-0 h-screen overflow-hidden">
-        <BuildingScene progress={progress} activeStep={activeStep} />
-
-        <StageProgress steps={buildSteps} activeKey={activeStep.key} progress={progress} />
-
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-20 px-4 pt-20 lg:px-10">
-          <div className="mx-auto flex w-full max-w-[1500px] items-start justify-between gap-4">
-            <div className="rounded-xl border border-slate-200/20 bg-slate-950/55 px-3 py-2 backdrop-blur-sm">
-              <p className="text-[0.62rem] uppercase tracking-[0.14rem] text-slate-400">Build Progress</p>
-              <p className="display-title mt-1 text-sm text-slate-100">{Math.round(progress * 100)}%</p>
-            </div>
-            <div className="rounded-xl border border-slate-200/20 bg-slate-950/55 px-3 py-2 backdrop-blur-sm">
-              <p className="text-[0.62rem] uppercase tracking-[0.14rem] text-slate-400">Stage</p>
-              <p className="display-title mt-1 text-sm text-slate-100">{activeStep.label}</p>
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,63%)_minmax(340px,37%)]">
+        <div className="relative">
+          <div className="sticky top-0 h-screen py-2 lg:py-4">
+            <div className="h-full overflow-hidden rounded-[26px]">
+              <BuildingScene progress={progress} activeStep={activeStep} />
             </div>
           </div>
         </div>
 
-        <div className="pointer-events-none absolute inset-0 z-20 px-4 pb-6 pt-28 lg:px-10 lg:pb-10">
-          <div className="mx-auto grid h-full w-full max-w-[1500px] grid-cols-12 items-end gap-4">
-            <div className="col-span-12 lg:col-span-5">
-              <AnimatePresence mode="wait">
-                <motion.article
-                  key={activeMoment.key}
-                  initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
-                  transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
-                  className="glass-panel rounded-2xl p-4 lg:p-6"
-                >
-                  <p className="section-kicker">{activeMoment.title}</p>
-                  <h2 className="display-title mt-3 max-w-xl text-2xl leading-tight text-slate-100 lg:text-4xl">
-                    {activeMoment.subtitle}
-                  </h2>
-                  <p className="soft-muted mt-3 max-w-xl text-sm leading-relaxed lg:text-base">{activeMoment.copy}</p>
-                  <p className="mt-4 text-sm italic text-blueprint lg:text-base">{activeMoment.quote}</p>
-                </motion.article>
-              </AnimatePresence>
-            </div>
-
-            <div className="col-span-12 lg:col-span-4 lg:col-start-9">
-              <AnimatePresence mode="wait">
-                {activeMoment.key === "framework" && (
-                  <motion.div
-                    key="framework-panel"
-                    initial={{ opacity: 0, y: 22, filter: "blur(8px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, y: 12, filter: "blur(6px)" }}
-                    transition={{ duration: 0.55 }}
-                    className="glass-panel rounded-2xl p-4"
-                  >
-                    <p className="blueprint-label mb-2">Framework Diagnostics</p>
-                    <RadarSkillChart />
-                    <div className="mt-4">
-                      <SkillBars />
-                    </div>
-                  </motion.div>
-                )}
-
-                {activeMoment.key === "upperFloors" && (
-                  <motion.div
-                    key="growth-panel"
-                    initial={{ opacity: 0, y: 22, filter: "blur(8px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, y: 12, filter: "blur(6px)" }}
-                    transition={{ duration: 0.55 }}
-                    className="glass-panel rounded-2xl p-4"
-                  >
-                    <p className="blueprint-label mb-2">Complexity / Output Growth</p>
-                    <GrowthLineChart />
-                  </motion.div>
-                )}
-
-                {activeMoment.key === "firstStructure" && (
-                  <motion.div
-                    key="kpi-panel"
-                    initial={{ opacity: 0, y: 22, filter: "blur(8px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, y: 12, filter: "blur(6px)" }}
-                    transition={{ duration: 0.55 }}
-                    className="glass-panel rounded-2xl p-4"
-                  >
-                    <p className="blueprint-label mb-3">Execution Metrics</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="rounded-xl border border-slate-200/20 bg-slate-800/35 p-3">
-                        <p className="text-[0.62rem] uppercase tracking-[0.12rem] text-slate-400">First Releases</p>
-                        <p className="mt-2 text-xl text-slate-100">12+</p>
-                      </div>
-                      <div className="rounded-xl border border-slate-200/20 bg-slate-800/35 p-3">
-                        <p className="text-[0.62rem] uppercase tracking-[0.12rem] text-slate-400">Dashboards</p>
-                        <p className="mt-2 text-xl text-slate-100">9</p>
-                      </div>
-                      <div className="rounded-xl border border-slate-200/20 bg-slate-800/35 p-3">
-                        <p className="text-[0.62rem] uppercase tracking-[0.12rem] text-slate-400">Iteration Cycles</p>
-                        <p className="mt-2 text-xl text-slate-100">34</p>
-                      </div>
-                      <div className="rounded-xl border border-slate-200/20 bg-slate-800/35 p-3">
-                        <p className="text-[0.62rem] uppercase tracking-[0.12rem] text-slate-400">Manual Work</p>
-                        <p className="mt-2 text-xl text-slate-100">-62%</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-
-                {activeMoment.key === "rooftop" && (
-                  <motion.div
-                    key="rooftop-panel"
-                    initial={{ opacity: 0, y: 22, filter: "blur(8px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, y: 12, filter: "blur(6px)" }}
-                    transition={{ duration: 0.55 }}
-                    className="glass-panel rounded-2xl p-4"
-                  >
-                    <p className="blueprint-label">Current Positioning</p>
-                    <p className="mt-2 text-sm leading-relaxed text-slate-200">
-                      BI Analyst with architectural approach to data systems, visual storytelling and scalable metric design.
-                    </p>
-                    <a
-                      href="#contact"
-                      className="pointer-events-auto mt-4 inline-flex rounded-full border border-blue-100/35 bg-blue-100/10 px-4 py-2 text-xs uppercase tracking-[0.12rem] text-blue-100 transition hover:bg-blue-100/20"
-                    >
-                      Contact
-                    </a>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-        </div>
-
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 px-4 pb-3 lg:px-10 lg:pb-5">
-          <div className="mx-auto flex max-w-[1500px] items-center gap-2 overflow-x-auto">
-            {buildSteps.map((step) => (
-              <span
+        <div className="relative z-20">
+          {buildSteps.map((step) => {
+            const copy = stepNarrative[step.key];
+            const isActive = activeKey === step.key;
+            return (
+              <article
                 key={step.key}
-                className={`rounded-full border px-3 py-1 text-[0.62rem] uppercase tracking-[0.14rem] ${
-                  activeStep.key === step.key
-                    ? "border-blue-100/55 bg-blue-100/18 text-blue-100"
-                    : "border-slate-400/35 bg-slate-900/45 text-slate-400"
-                }`}
+                id={step.anchor}
+                ref={(node) => {
+                  if (node) stepRefs.current.set(step.key, node);
+                }}
+                className="min-h-[95vh] py-10"
               >
-                {step.label}
-              </span>
-            ))}
-          </div>
+                <div className="sticky top-24">
+                  <motion.div
+                    initial={{ opacity: 0.28, y: 20 }}
+                    animate={{ opacity: isActive ? 1 : 0.52, y: isActive ? 0 : 10 }}
+                    transition={{ duration: 0.4 }}
+                    className={`glass-panel rounded-[24px] p-5 lg:p-6 ${isActive ? "border-blue-200/40" : ""}`}
+                  >
+                    <p className="section-kicker">
+                      {step.short} · {copy.title}
+                    </p>
+                    <h3 className="display-title mt-3 text-2xl leading-tight text-slate-100 lg:text-4xl">{copy.subtitle}</h3>
+                    <p className="soft-muted mt-3 text-sm leading-relaxed lg:text-base">{copy.copy}</p>
+                    <p className="mt-4 text-sm italic text-blueprint">{copy.quote}</p>
+
+                    <AnimatePresence mode="wait">
+                      {copy.panel === "radar" && isActive && (
+                        <motion.div
+                          key="radar"
+                          initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
+                          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                          exit={{ opacity: 0, y: 8, filter: "blur(6px)" }}
+                          className="mt-5 space-y-4"
+                        >
+                          <div className="rounded-2xl border border-slate-300/20 bg-slate-900/30 p-4">
+                            <p className="blueprint-label mb-2">Skill Framework</p>
+                            <RadarSkillChart />
+                          </div>
+                          <div className="rounded-2xl border border-slate-300/20 bg-slate-900/30 p-4">
+                            <p className="blueprint-label mb-3">Capability Load</p>
+                            <SkillBars />
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {copy.panel === "line" && isActive && (
+                        <motion.div
+                          key="line"
+                          initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
+                          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                          exit={{ opacity: 0, y: 8, filter: "blur(6px)" }}
+                          className="mt-5 rounded-2xl border border-slate-300/20 bg-slate-900/30 p-4"
+                        >
+                          <p className="blueprint-label mb-2">Growth Dynamics</p>
+                          <GrowthLineChart />
+                        </motion.div>
+                      )}
+
+                      {copy.panel === "kpi" && isActive && (
+                        <motion.div
+                          key="kpi"
+                          initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
+                          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                          exit={{ opacity: 0, y: 8, filter: "blur(6px)" }}
+                          className="mt-5 grid grid-cols-2 gap-2"
+                        >
+                          <div className="rounded-xl border border-slate-300/20 bg-slate-900/35 p-3">
+                            <p className="text-[0.62rem] uppercase tracking-[0.12rem] text-slate-400">Study Hours</p>
+                            <p className="mt-2 text-xl text-slate-100">900+</p>
+                          </div>
+                          <div className="rounded-xl border border-slate-300/20 bg-slate-900/35 p-3">
+                            <p className="text-[0.62rem] uppercase tracking-[0.12rem] text-slate-400">SQL Modules</p>
+                            <p className="mt-2 text-xl text-slate-100">42</p>
+                          </div>
+                          <div className="rounded-xl border border-slate-300/20 bg-slate-900/35 p-3">
+                            <p className="text-[0.62rem] uppercase tracking-[0.12rem] text-slate-400">Frameworks</p>
+                            <p className="mt-2 text-xl text-slate-100">6</p>
+                          </div>
+                          <div className="rounded-xl border border-slate-300/20 bg-slate-900/35 p-3">
+                            <p className="text-[0.62rem] uppercase tracking-[0.12rem] text-slate-400">Discipline Score</p>
+                            <p className="mt-2 text-xl text-slate-100">A+</p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>

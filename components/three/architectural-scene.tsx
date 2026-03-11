@@ -1,8 +1,6 @@
 "use client";
 
-import { OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Bloom, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 
@@ -291,14 +289,6 @@ export default function ArchitecturalScene({ progress }: ArchitecturalSceneProps
       <TowerAssembly progress={progress} />
       <AtmosphereParticles />
       <CameraRig progress={progress} />
-
-      <OrbitControls enabled={false} />
-
-      <EffectComposer>
-        <Bloom intensity={0.62} mipmapBlur luminanceThreshold={0.42} luminanceSmoothing={0.82} />
-        <Noise opacity={0.03} />
-        <Vignette eskil={false} offset={0.24} darkness={0.7} />
-      </EffectComposer>
     </Canvas>
   );
 }
