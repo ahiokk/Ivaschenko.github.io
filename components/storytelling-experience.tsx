@@ -217,7 +217,7 @@ export default function StorytellingExperience() {
           <div className="relative h-full overflow-hidden rounded-[30px] border border-slate-200/10 bg-[#04070d] shadow-[0_30px_120px_rgba(0,0,0,0.48)]">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(128,166,207,0.14),transparent_22%),radial-gradient(circle_at_82%_12%,rgba(200,220,244,0.08),transparent_20%)]" />
 
-            <div className="absolute inset-y-0 left-0 right-0 lg:right-[23rem]">
+            <div className="absolute inset-y-0 left-0 right-0 lg:right-[21rem]">
               <motion.div
                 className="h-full w-full will-change-transform"
                 animate={{ x: sceneOrbitX, scale: sceneScale }}
@@ -229,14 +229,14 @@ export default function StorytellingExperience() {
               <div className="pointer-events-none absolute left-5 top-5 hidden lg:block">
                 <div className="glass-panel rounded-[22px] px-4 py-3">
                   <p className="section-kicker">Intern / Junior</p>
-                  <p className="mt-2 max-w-[18rem] text-sm leading-relaxed text-slate-300">
+                  <p className="mt-2 max-w-[15rem] text-sm leading-relaxed text-slate-300">
                     Одна premium scroll-scene, где башня строится как roadmap роста в BI.
                   </p>
                 </div>
               </div>
             </div>
 
-            <aside className="absolute inset-y-0 right-0 z-30 w-full max-w-[23rem] border-l border-slate-200/10 bg-[linear-gradient(180deg,rgba(7,11,18,0.76)_0%,rgba(4,7,13,0.88)_100%)] backdrop-blur-md">
+            <aside className="absolute inset-y-0 right-0 z-30 w-full max-w-[21rem] border-l border-slate-200/10 bg-[linear-gradient(180deg,rgba(7,11,18,0.72)_0%,rgba(4,7,13,0.86)_100%)] backdrop-blur-md">
               <div className="flex h-full flex-col justify-between px-4 pb-5 pt-5 lg:px-5 lg:pb-6">
                 <div>
                   <div className="flex items-start justify-between gap-4">
