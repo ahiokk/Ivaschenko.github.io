@@ -119,12 +119,12 @@ export default function StorytellingExperience() {
   const activeStep = useMemo(() => buildSteps.find((step) => step.key === activeKey) ?? buildSteps[0], [activeKey]);
 
   return (
-    <section ref={sectionRef} id="story" className="relative pb-14">
+    <section ref={sectionRef} id="story" className="relative pb-14 pt-2 lg:pt-4">
       <StageProgress steps={buildSteps} activeKey={activeKey} progress={progress} />
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,63%)_minmax(340px,37%)]">
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,63%)_minmax(340px,37%)]">
         <div className="relative">
-          <div className="sticky top-0 h-screen py-2 lg:py-4">
+          <div className="sticky top-0 h-screen py-2 lg:top-20 lg:h-[calc(100vh-5.5rem)] lg:py-0">
             <div className="h-full overflow-hidden rounded-[26px]">
               <BuildingScene progress={progress} activeStep={activeStep} />
             </div>
@@ -140,11 +140,15 @@ export default function StorytellingExperience() {
                 key={step.key}
                 id={step.anchor}
                 ref={(node) => {
-                  if (node) stepRefs.current.set(step.key, node);
+                  if (node) {
+                    stepRefs.current.set(step.key, node);
+                  } else {
+                    stepRefs.current.delete(step.key);
+                  }
                 }}
                 className="min-h-[95vh] py-10"
               >
-                <div className="sticky top-24">
+                <div className="sticky top-24 lg:top-28">
                   <motion.div
                     initial={{ opacity: 0.28, y: 20 }}
                     animate={{ opacity: isActive ? 1 : 0.52, y: isActive ? 0 : 10 }}

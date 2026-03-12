@@ -89,6 +89,10 @@ a {
   text-transform: uppercase;
 }
 
+.text-blueprint {
+  color: rgba(158, 201, 244, 0.92);
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     scroll-behavior: auto !important;
