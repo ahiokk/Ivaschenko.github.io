@@ -96,8 +96,8 @@ function FacadeGrid({
 
   return (
     <g>
-      <rect x={x} y={topY} width={width} height={visibleHeight} fill={glassFill} opacity={0.88} stroke="rgba(181, 216, 248, 0.16)" />
-      <rect x={x} y={topY} width={width} height={visibleHeight} fill="url(#glassSheen)" opacity={0.22} />
+      <rect x={x} y={topY} width={width} height={visibleHeight} fill={glassFill} opacity={0.94} stroke="rgba(181, 216, 248, 0.18)" />
+      <rect x={x} y={topY} width={width} height={visibleHeight} fill="url(#glassSheen)" opacity={0.16} />
       {Array.from({ length: cols - 1 }).map((_, index) => (
         <line
           key={`mullion-v-${index}`}
@@ -105,7 +105,7 @@ function FacadeGrid({
           y1={topY}
           x2={x + ((index + 1) * width) / cols}
           y2={topY + visibleHeight}
-          stroke="rgba(196, 225, 250, 0.14)"
+          stroke="rgba(196, 225, 250, 0.22)"
           strokeWidth="1"
         />
       ))}
@@ -116,7 +116,7 @@ function FacadeGrid({
           y1={topY + ((index + 1) * visibleHeight) / rows}
           x2={x + width}
           y2={topY + ((index + 1) * visibleHeight) / rows}
-          stroke="rgba(196, 225, 250, 0.12)"
+          stroke="rgba(196, 225, 250, 0.18)"
           strokeWidth="1"
         />
       ))}
@@ -124,8 +124,8 @@ function FacadeGrid({
         Array.from({ length: cols }).map((__, col) => {
           const rowActivation = clamp(glow * rows - (rows - row - 1), 0, 1);
           const lightSeed = ((row * 5 + col * 3) % 7) / 7;
-          const light = clamp(rowActivation * 0.72 + lightSeed * 0.14, 0, 0.88);
-          const shadow = ((row + col * 2) % 4) === 0 ? 0.18 : 0;
+          const light = clamp(rowActivation * 0.5 + lightSeed * 0.1, 0.06, 0.64);
+          const shadow = ((row + col * 2) % 4) === 0 ? 0.28 : 0;
           const windowX = x + gutterX + col * (cellWidth + gutterX);
           const windowY = topY + gutterY + row * (cellHeight + gutterY);
           return (
@@ -157,7 +157,7 @@ function VerticalFins({
   height,
   count,
   reveal,
-  opacity = 0.64
+  opacity = 0.8
 }: {
   x: number;
   y: number;
@@ -221,7 +221,7 @@ function SideGlass({
       <polygon
         points={`${x + width},${topY} ${x + width + dx},${topY - dy} ${x + width + dx},${topY + visibleHeight - dy} ${x + width},${topY + visibleHeight}`}
         fill="url(#glassSide)"
-        opacity={0.72}
+        opacity={0.82}
         stroke="rgba(181, 216, 248, 0.14)"
       />
       {Array.from({ length: 8 }).map((_, index) => {
@@ -255,7 +255,7 @@ function SideGlass({
       <polygon
         points={`${x + width},${topY + visibleHeight * 0.18} ${x + width + dx},${topY + visibleHeight * 0.18 - dy} ${x + width + dx},${topY + visibleHeight * 0.78 - dy} ${x + width},${topY + visibleHeight * 0.78}`}
         fill="#ddf0ff"
-        opacity={0.04 + glow * 0.18}
+        opacity={0.03 + glow * 0.12}
       />
       <line
         x1={x + width + dx * 0.18}
@@ -423,6 +423,27 @@ export default function ArchitecturalIllustration({ progress }: ArchitecturalIll
             <stop offset="0%" stopColor="#738296" />
             <stop offset="100%" stopColor="#42505e" />
           </linearGradient>
+          <linearGradient id="podiumStoneFront" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#4f5f6f" />
+            <stop offset="45%" stopColor="#3a4653" />
+            <stop offset="100%" stopColor="#232b35" />
+          </linearGradient>
+          <linearGradient id="podiumStoneSide" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#33404d" />
+            <stop offset="100%" stopColor="#19222c" />
+          </linearGradient>
+          <linearGradient id="podiumStoneTop" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#7f92a6" />
+            <stop offset="100%" stopColor="#4c5d6d" />
+          </linearGradient>
+          <linearGradient id="podiumGlassFront" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#d9efff" stopOpacity="0.38" />
+            <stop offset="100%" stopColor="#173149" stopOpacity="0.78" />
+          </linearGradient>
+          <linearGradient id="podiumGlassSide" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#a8d4ff" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="#12283b" stopOpacity="0.82" />
+          </linearGradient>
           <linearGradient id="steelFront" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#a3b2c2" />
             <stop offset="100%" stopColor="#647387" />
@@ -431,18 +452,59 @@ export default function ArchitecturalIllustration({ progress }: ArchitecturalIll
             <stop offset="0%" stopColor="#abc0d6" />
             <stop offset="100%" stopColor="#5d7085" />
           </linearGradient>
+          <linearGradient id="towerBodyFront" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#445465" />
+            <stop offset="48%" stopColor="#2d3946" />
+            <stop offset="100%" stopColor="#19232d" />
+          </linearGradient>
+          <linearGradient id="towerBodySide" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#2e3d4b" />
+            <stop offset="100%" stopColor="#121c26" />
+          </linearGradient>
+          <linearGradient id="towerBodyTop" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#75889d" />
+            <stop offset="100%" stopColor="#40505f" />
+          </linearGradient>
+          <linearGradient id="towerGlassSkinFront" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#9cc8ef" stopOpacity="0.22" />
+            <stop offset="100%" stopColor="#0f2436" stopOpacity="0.58" />
+          </linearGradient>
+          <linearGradient id="towerGlassSkinSide" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#6ca5d3" stopOpacity="0.16" />
+            <stop offset="100%" stopColor="#102335" stopOpacity="0.68" />
+          </linearGradient>
+          <linearGradient id="towerGlassSkinTop" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#a8d2f2" stopOpacity="0.24" />
+            <stop offset="100%" stopColor="#385069" stopOpacity="0.44" />
+          </linearGradient>
+          <linearGradient id="crownFront" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#526477" />
+            <stop offset="100%" stopColor="#293645" />
+          </linearGradient>
+          <linearGradient id="crownSide" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#364757" />
+            <stop offset="100%" stopColor="#1d2a35" />
+          </linearGradient>
+          <linearGradient id="crownTop" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#8fa4b7" />
+            <stop offset="100%" stopColor="#596d80" />
+          </linearGradient>
+          <linearGradient id="canopyMetal" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#dce8f4" stopOpacity="0.34" />
+            <stop offset="100%" stopColor="#5f758a" stopOpacity="0.2" />
+          </linearGradient>
           <linearGradient id="glassFront" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#a9d7ff" stopOpacity="0.44" />
-            <stop offset="55%" stopColor="#537fa8" stopOpacity="0.22" />
-            <stop offset="100%" stopColor="#18344e" stopOpacity="0.58" />
+            <stop offset="0%" stopColor="#bedfff" stopOpacity="0.24" />
+            <stop offset="55%" stopColor="#4f7394" stopOpacity="0.18" />
+            <stop offset="100%" stopColor="#13273a" stopOpacity="0.82" />
           </linearGradient>
           <linearGradient id="glassFrontDeep" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#9ecffb" stopOpacity="0.36" />
-            <stop offset="100%" stopColor="#0f2538" stopOpacity="0.66" />
+            <stop offset="0%" stopColor="#b9dbf7" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="#0d1f30" stopOpacity="0.84" />
           </linearGradient>
           <linearGradient id="glassSide" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#8bc1f4" stopOpacity="0.32" />
-            <stop offset="100%" stopColor="#122b43" stopOpacity="0.58" />
+            <stop offset="0%" stopColor="#9ecaf0" stopOpacity="0.18" />
+            <stop offset="100%" stopColor="#102132" stopOpacity="0.76" />
           </linearGradient>
           <linearGradient id="glassSheen" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#ffffff" stopOpacity="0.12" />
@@ -458,7 +520,7 @@ export default function ArchitecturalIllustration({ progress }: ArchitecturalIll
             <stop offset="100%" stopColor="#0f1924" />
           </linearGradient>
           <radialGradient id="towerBloom" cx="50%" cy="38%" r="48%">
-            <stop offset="0%" stopColor="#a4d2ff" stopOpacity="0.28" />
+            <stop offset="0%" stopColor="#a4d2ff" stopOpacity="0.18" />
             <stop offset="100%" stopColor="#a4d2ff" stopOpacity="0" />
           </radialGradient>
           <radialGradient id="lobbyGlow" cx="50%" cy="54%" r="54%">
@@ -603,80 +665,133 @@ export default function ArchitecturalIllustration({ progress }: ArchitecturalIll
             height={54}
             depth={208}
             reveal={foundation}
-            frontFill="url(#concreteFront)"
-            sideFill="url(#concreteSide)"
-            topFill="url(#concreteTop)"
+            frontFill="url(#podiumStoneFront)"
+            sideFill="url(#podiumStoneSide)"
+            topFill="url(#podiumStoneTop)"
             opacity={0.98}
           />
+          <polygon
+            points="560,848 904,848 1018,792 672,792"
+            fill="rgba(224,236,247,0.08)"
+            stroke="rgba(176,208,236,0.12)"
+            opacity={foundation}
+          />
           <Cuboid
-            x={604}
-            y={756}
-            width={294}
-            height={90}
-            depth={172}
+            x={600}
+            y={720}
+            width={290}
+            height={126}
+            depth={174}
             reveal={foundation}
-            frontFill="#3c4955"
-            sideFill="#25313f"
-            topFill="#687a8f"
+            frontFill="url(#podiumStoneFront)"
+            sideFill="url(#podiumStoneSide)"
+            topFill="url(#podiumStoneTop)"
             opacity={0.97}
           />
           <Cuboid
-            x={644}
-            y={686}
-            width={220}
-            height={64}
-            depth={154}
+            x={638}
+            y={662}
+            width={232}
+            height={62}
+            depth={150}
             reveal={foundation}
-            frontFill="rgba(188,220,248,0.18)"
-            sideFill="rgba(75,103,132,0.24)"
-            topFill="rgba(220,238,251,0.22)"
-            opacity={0.92}
+            frontFill="rgba(188,220,248,0.1)"
+            sideFill="rgba(58,83,108,0.2)"
+            topFill="rgba(220,238,251,0.18)"
+            opacity={0.96}
           />
           <polygon
-            points="642,742 864,742 904,724 682,724"
-            fill="rgba(227,240,251,0.12)"
-            stroke="rgba(182,214,243,0.14)"
+            points="632,720 872,720 914,700 674,700"
+            fill="url(#canopyMetal)"
+            stroke="rgba(188,220,247,0.18)"
             opacity={foundation}
           />
           <polygon
-            points="650,782 822,782 822,756 846,744 846,792 650,792"
-            fill="url(#glassFrontDeep)"
-            opacity={0.18 + foundation * 0.2 + nightLights * 0.3}
+            points="656,738 824,738 858,720 690,720"
+            fill="rgba(224,241,255,0.08)"
+            opacity={foundation}
           />
+          <g opacity={foundation}>
+            <polygon points="620,844 838,844 872,828 652,828" fill="rgba(15,24,33,0.86)" />
+            <polygon points="636,830 822,830 850,816 664,816" fill="rgba(32,44,57,0.82)" />
+            <polygon points="654,816 804,816 826,806 676,806" fill="rgba(56,73,91,0.76)" />
+            <line x1="664" y1="828" x2="850" y2="828" stroke="rgba(170,201,228,0.12)" />
+            <line x1="680" y1="816" x2="826" y2="816" stroke="rgba(170,201,228,0.1)" />
+          </g>
 
-          <ellipse cx="734" cy="770" rx="92" ry="42" fill="url(#lobbyGlow)" opacity={0.12 + nightLights * 0.5} />
-          <g opacity={0.08 + nightLights * 0.58}>
-            {Array.from({ length: 8 }).map((_, index) => (
-              <rect key={`lobby-window-${index}`} x={662 + index * 22} y="748" width="14" height="38" rx="1.5" fill="#dff2ff" opacity={0.32 + (index % 3) * 0.12} />
+          <polygon
+            points="664,786 828,786 828,726 862,708 862,804 664,804"
+            fill="url(#podiumGlassFront)"
+            stroke="rgba(190,220,246,0.18)"
+            opacity={0.46 + foundation * 0.16 + nightLights * 0.16}
+          />
+          <polygon
+            points="828,786 862,768 862,804 828,804"
+            fill="url(#podiumGlassSide)"
+            stroke="rgba(190,220,246,0.12)"
+            opacity={0.54 + foundation * 0.12}
+          />
+          <ellipse cx="742" cy="792" rx="104" ry="50" fill="url(#lobbyGlow)" opacity={0.14 + nightLights * 0.48} />
+          <g opacity={0.1 + nightLights * 0.62}>
+            {Array.from({ length: 9 }).map((_, index) => (
+              <rect key={`lobby-window-${index}`} x={676 + index * 17.6} y="746" width="10" height="46" rx="1.5" fill="#def1ff" opacity={0.34 + (index % 3) * 0.1} />
             ))}
-            <rect x="688" y="770" width="50" height="12" rx="3" fill="#203244" opacity="0.3" />
-            <rect x="758" y="770" width="30" height="10" rx="3" fill="#203244" opacity="0.24" />
+            <rect x="718" y="766" width="48" height="28" rx="3" fill="#203244" opacity="0.26" />
+            <rect x="776" y="766" width="28" height="26" rx="3" fill="#203244" opacity="0.2" />
+            <line x1="746" y1="736" x2="746" y2="798" stroke="rgba(210,233,251,0.22)" />
+          </g>
+
+          <g opacity={0.2 + foundation * 0.56}>
+            {Array.from({ length: 7 }).map((_, index) => (
+              <line
+                key={`lobby-mullion-${index}`}
+                x1={674 + index * 24}
+                y1="738"
+                x2={674 + index * 24}
+                y2="804"
+                stroke="rgba(196,223,248,0.12)"
+              />
+            ))}
           </g>
 
           <Cuboid
-            x={624}
-            y={700}
-            width={52}
-            height={150}
-            depth={88}
+            x={616}
+            y={708}
+            width={44}
+            height={142}
+            depth={96}
             reveal={foundation}
-            frontFill="rgba(70,85,101,0.28)"
-            sideFill="rgba(34,47,60,0.24)"
-            topFill="rgba(105,124,144,0.18)"
-            opacity={0.72}
+            frontFill="url(#podiumStoneFront)"
+            sideFill="url(#podiumStoneSide)"
+            topFill="url(#podiumStoneTop)"
+            opacity={0.92}
           />
           <Cuboid
-            x={848}
-            y={724}
-            width={62}
-            height={126}
-            depth={74}
+            x={850}
+            y={734}
+            width={76}
+            height={116}
+            depth={84}
             reveal={foundation}
-            frontFill="rgba(70,85,101,0.24)"
-            sideFill="rgba(34,47,60,0.22)"
-            topFill="rgba(105,124,144,0.16)"
-            opacity={0.64}
+            frontFill="url(#podiumStoneFront)"
+            sideFill="url(#podiumStoneSide)"
+            topFill="url(#podiumStoneTop)"
+            opacity={0.9}
           />
+          <polygon
+            points="848,744 926,744 970,724 892,724"
+            fill="rgba(224,239,251,0.1)"
+            stroke="rgba(186,217,244,0.14)"
+            opacity={foundation}
+          />
+
+          <g opacity={0.16 + foundation * 0.36}>
+            <line x1="624" y1="846" x2="890" y2="846" stroke="rgba(197,226,249,0.08)" />
+            <line x1="624" y1="734" x2="892" y2="734" stroke="rgba(197,226,249,0.06)" />
+            <line x1="650" y1="720" x2="650" y2="846" stroke="rgba(197,226,249,0.06)" />
+            <line x1="842" y1="720" x2="842" y2="846" stroke="rgba(197,226,249,0.06)" />
+            <line x1="616" y1="760" x2="890" y2="760" stroke="rgba(197,226,249,0.05)" />
+          </g>
 
           <g opacity={0.92}>
             {[654, 690, 732, 774, 816, 852].map((x, index) => {
@@ -748,10 +863,10 @@ export default function ArchitecturalIllustration({ progress }: ArchitecturalIll
             height={548}
             depth={112}
             reveal={floors}
-            frontFill="rgba(64, 79, 95, 0.18)"
-            sideFill="rgba(32, 46, 59, 0.3)"
-            topFill="rgba(123, 149, 173, 0.18)"
-            opacity={0.74}
+            frontFill="url(#towerBodyFront)"
+            sideFill="url(#towerBodySide)"
+            topFill="url(#towerBodyTop)"
+            opacity={0.98}
           />
           <Cuboid
             x={646}
@@ -760,10 +875,10 @@ export default function ArchitecturalIllustration({ progress }: ArchitecturalIll
             height={430}
             depth={90}
             reveal={floors}
-            frontFill="rgba(70, 86, 102, 0.16)"
-            sideFill="rgba(34, 48, 61, 0.24)"
-            topFill="rgba(117, 140, 163, 0.16)"
-            opacity={0.68}
+            frontFill="url(#towerBodyFront)"
+            sideFill="url(#towerBodySide)"
+            topFill="url(#towerBodyTop)"
+            opacity={0.9}
           />
           <Cuboid
             x={846}
@@ -772,10 +887,10 @@ export default function ArchitecturalIllustration({ progress }: ArchitecturalIll
             height={340}
             depth={76}
             reveal={floors}
-            frontFill="rgba(70, 86, 102, 0.14)"
-            sideFill="rgba(34, 48, 61, 0.22)"
-            topFill="rgba(117, 140, 163, 0.14)"
-            opacity={0.66}
+            frontFill="url(#towerBodyFront)"
+            sideFill="url(#towerBodySide)"
+            topFill="url(#towerBodyTop)"
+            opacity={0.88}
           />
 
           <Cuboid
@@ -785,14 +900,20 @@ export default function ArchitecturalIllustration({ progress }: ArchitecturalIll
             height={548}
             depth={112}
             reveal={facade}
-            frontFill="rgba(84, 120, 156, 0.16)"
-            sideFill="rgba(24, 44, 67, 0.26)"
-            topFill="rgba(132, 176, 220, 0.18)"
-            opacity={0.9}
+            frontFill="url(#towerGlassSkinFront)"
+            sideFill="url(#towerGlassSkinSide)"
+            topFill="url(#towerGlassSkinTop)"
+            opacity={0.68}
           />
           <FacadeGrid x={686} y={138} width={160} height={548} cols={6} rows={15} reveal={facade} glow={nightLights} />
           <VerticalFins x={686} y={138} width={160} height={548} count={7} reveal={facade} />
           <SideGlass x={686} y={138} width={160} height={548} depth={112} reveal={facade} glow={nightLights} />
+          <g opacity={0.18 + facade * 0.68}>
+            <rect x="684" y="138" width="8" height="548" fill="#16212b" opacity="0.9" />
+            <rect x="840" y="138" width="8" height="548" fill="#16212b" opacity="0.88" />
+            <line x1="686" y1="138" x2="686" y2="686" stroke="rgba(214,235,252,0.22)" strokeWidth="1.1" />
+            <line x1="846" y1="138" x2="846" y2="686" stroke="rgba(214,235,252,0.18)" strokeWidth="1" />
+          </g>
 
           <Cuboid
             x={646}
@@ -801,12 +922,15 @@ export default function ArchitecturalIllustration({ progress }: ArchitecturalIll
             height={430}
             depth={90}
             reveal={facade}
-            frontFill="rgba(84, 120, 156, 0.15)"
-            sideFill="rgba(24, 44, 67, 0.22)"
-            topFill="rgba(132, 176, 220, 0.16)"
-            opacity={0.78}
+            frontFill="url(#towerGlassSkinFront)"
+            sideFill="url(#towerGlassSkinSide)"
+            topFill="url(#towerGlassSkinTop)"
+            opacity={0.6}
           />
           <FacadeGrid x={646} y={256} width={40} height={430} cols={2} rows={11} reveal={facade} glow={nightLights} glassFill="url(#glassFrontDeep)" />
+          <g opacity={0.12 + facade * 0.42}>
+            <rect x="644" y="256" width="6" height="430" fill="#17222c" opacity="0.84" />
+          </g>
 
           <Cuboid
             x={846}
@@ -815,13 +939,16 @@ export default function ArchitecturalIllustration({ progress }: ArchitecturalIll
             height={340}
             depth={76}
             reveal={facade}
-            frontFill="rgba(84, 120, 156, 0.15)"
-            sideFill="rgba(24, 44, 67, 0.22)"
-            topFill="rgba(132, 176, 220, 0.16)"
-            opacity={0.76}
+            frontFill="url(#towerGlassSkinFront)"
+            sideFill="url(#towerGlassSkinSide)"
+            topFill="url(#towerGlassSkinTop)"
+            opacity={0.58}
           />
           <FacadeGrid x={846} y={346} width={56} height={340} cols={2} rows={9} reveal={facade} glow={nightLights} glassFill="url(#glassFrontDeep)" />
           <SideGlass x={846} y={346} width={56} height={340} depth={76} reveal={facade} glow={nightLights} />
+          <g opacity={0.12 + facade * 0.4}>
+            <rect x="844" y="346" width="6" height="340" fill="#17222c" opacity="0.82" />
+          </g>
 
           {Array.from({ length: 7 }).map((_, level) => {
             const reveal = smoothStep(facade, Math.max(0, level * 0.08 - 0.06), Math.min(1, 0.46 + level * 0.06));
@@ -850,7 +977,7 @@ export default function ArchitecturalIllustration({ progress }: ArchitecturalIll
             <rect x="746" y="524" width="42" height="76" fill="url(#lobbyGlow)" opacity="0.12" />
           </g>
 
-          <Cuboid x={708} y={72} width={112} height={78} depth={88} reveal={upper} frontFill="#47596b" sideFill="#324352" topFill="#7b90a7" opacity={0.98} />
+          <Cuboid x={708} y={72} width={112} height={78} depth={88} reveal={upper} frontFill="url(#crownFront)" sideFill="url(#crownSide)" topFill="url(#crownTop)" opacity={0.98} />
           <FacadeGrid x={716} y={88} width={96} height={54} cols={3} rows={2} reveal={upper} glow={nightLights} glassFill="url(#glassFrontDeep)" />
           <SideGlass x={716} y={88} width={96} height={54} depth={76} reveal={upper} glow={nightLights} />
           <polygon
