@@ -5,10 +5,10 @@ import { useEffect, useState } from "react";
 const links = [
   { href: "#intro", label: "Intro" },
   { href: "#foundation", label: "Foundation" },
-  { href: "#beams", label: "Framework" },
+  { href: "#columns", label: "Structure" },
+  { href: "#floors", label: "Systems" },
   { href: "#facade", label: "Facade" },
-  { href: "#rooftop", label: "Rooftop" },
-  { href: "#rooftop", label: "Contact" }
+  { href: "#rooftop", label: "Junior" }
 ];
 
 export default function TopNavigation() {
