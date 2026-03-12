@@ -217,6 +217,10 @@ export default function ArchitecturalIllustration({ progress }: ArchitecturalIll
   const lift = -p * 72;
   const scale = 0.95 + p * 0.06;
   const groundGlow = 0.22 + facade * 0.25 + roof * 0.15;
+  const atmosphereShiftY = -p * 32;
+  const groundShiftY = p * 118;
+  const gridScale = 1 + p * 0.06;
+  const blueprintShiftY = -p * 48;
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-[#05070d]">
@@ -265,40 +269,44 @@ export default function ArchitecturalIllustration({ progress }: ArchitecturalIll
           </filter>
         </defs>
 
-        <g opacity={0.42}>
-          {Array.from({ length: 34 }).map((_, index) => {
-            const cx = 120 + ((index * 97) % 1160);
-            const cy = 120 + ((index * 151) % 540);
-            const radius = 1.2 + (index % 3) * 0.8;
-            return <circle key={`dust-${index}`} cx={cx} cy={cy} r={radius} fill="#bad9f4" opacity={0.18 + (index % 5) * 0.05} />;
-          })}
+        <g transform={`translate(0 ${atmosphereShiftY})`}>
+          <g opacity={0.42}>
+            {Array.from({ length: 34 }).map((_, index) => {
+              const cx = 120 + ((index * 97) % 1160);
+              const cy = 120 + ((index * 151) % 540);
+              const radius = 1.2 + (index % 3) * 0.8;
+              return <circle key={`dust-${index}`} cx={cx} cy={cy} r={radius} fill="#bad9f4" opacity={0.18 + (index % 5) * 0.05} />;
+            })}
+          </g>
+
+          <ellipse cx="700" cy="310" rx="360" ry="220" fill="url(#skyBloom)" filter="url(#softGlow)" opacity={0.7 + roof * 0.2} />
         </g>
 
-        <ellipse cx="700" cy="310" rx="360" ry="220" fill="url(#skyBloom)" filter="url(#softGlow)" opacity={0.7 + roof * 0.2} />
-
-        <g opacity={0.5}>
-          <polygon points="110,850 690,620 1290,850 690,1070" fill="url(#groundGradient)" />
-          {Array.from({ length: 20 }).map((_, index) => {
-            const startX = 110 + index * 58;
-            const endX = 690 + index * 30;
-            return <line key={`grid-a-${index}`} x1={startX} y1="850" x2={endX} y2="620" stroke="rgba(108,148,191,0.16)" strokeWidth="1" />;
-          })}
-          {Array.from({ length: 20 }).map((_, index) => {
-            const startX = 1290 - index * 58;
-            const endX = 690 - index * 30;
-            return <line key={`grid-b-${index}`} x1={startX} y1="850" x2={endX} y2="620" stroke="rgba(108,148,191,0.16)" strokeWidth="1" />;
-          })}
-          {Array.from({ length: 12 }).map((_, index) => {
-            const t = index / 11;
-            const leftX = 110 + (690 - 110) * t;
-            const leftY = 850 + (620 - 850) * t;
-            const rightX = 1290 + (690 - 1290) * t;
-            const rightY = 850 + (620 - 850) * t;
-            return <line key={`grid-c-${index}`} x1={leftX} y1={leftY} x2={rightX} y2={rightY} stroke="rgba(108,148,191,0.16)" strokeWidth="1" />;
-          })}
+        <g transform={`translate(0 ${groundShiftY}) scale(${gridScale})`}>
+          <g opacity={0.5}>
+            <polygon points="110,850 690,620 1290,850 690,1070" fill="url(#groundGradient)" />
+            {Array.from({ length: 20 }).map((_, index) => {
+              const startX = 110 + index * 58;
+              const endX = 690 + index * 30;
+              return <line key={`grid-a-${index}`} x1={startX} y1="850" x2={endX} y2="620" stroke="rgba(108,148,191,0.16)" strokeWidth="1" />;
+            })}
+            {Array.from({ length: 20 }).map((_, index) => {
+              const startX = 1290 - index * 58;
+              const endX = 690 - index * 30;
+              return <line key={`grid-b-${index}`} x1={startX} y1="850" x2={endX} y2="620" stroke="rgba(108,148,191,0.16)" strokeWidth="1" />;
+            })}
+            {Array.from({ length: 12 }).map((_, index) => {
+              const t = index / 11;
+              const leftX = 110 + (690 - 110) * t;
+              const leftY = 850 + (620 - 850) * t;
+              const rightX = 1290 + (690 - 1290) * t;
+              const rightY = 850 + (620 - 850) * t;
+              return <line key={`grid-c-${index}`} x1={leftX} y1={leftY} x2={rightX} y2={rightY} stroke="rgba(108,148,191,0.16)" strokeWidth="1" />;
+            })}
+          </g>
         </g>
 
-        <g opacity={0.75 * site}>
+        <g opacity={0.75 * site} transform={`translate(0 ${blueprintShiftY})`}>
           <polygon points="470,760 730,660 910,760 645,872" fill="none" stroke="rgba(148,188,226,0.4)" strokeWidth="1.2" />
           <polygon points="520,735 720,657 855,732 650,818" fill="none" stroke="rgba(148,188,226,0.28)" strokeWidth="1" />
           {Array.from({ length: 7 }).map((_, index) => (

@@ -1,7 +1,9 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import BuildingScene from "@/components/building-scene";
 import GrowthLineChart from "@/components/charts/growth-line-chart";
 import RadarSkillChart from "@/components/charts/radar-skill-chart";
@@ -221,34 +223,37 @@ function DetailPanel({ activeKey }: { activeKey: BuildStep["key"] }) {
 
 export default function StorytellingExperience() {
   const sectionRef = useRef<HTMLElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
 
-  useEffect(() => {
-    let frame = 0;
+  useLayoutEffect(() => {
+    if (!sectionRef.current || !viewportRef.current) return;
 
-    const update = () => {
-      frame = 0;
-      if (!sectionRef.current) return;
+    gsap.registerPlugin(ScrollTrigger);
 
-      const rect = sectionRef.current.getBoundingClientRect();
-      const total = Math.max(sectionRef.current.offsetHeight - window.innerHeight, 1);
-      const nextProgress = clamp(-rect.top / total);
-      setProgress(nextProgress);
-    };
+    const section = sectionRef.current;
+    const viewport = viewportRef.current;
 
-    const onScroll = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(update);
-    };
+    const trigger = ScrollTrigger.create({
+      trigger: section,
+      start: "top top",
+      end: "bottom bottom",
+      pin: viewport,
+      pinSpacing: false,
+      scrub: 0.9,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        setProgress(clamp(self.progress));
+      }
+    });
 
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    const refresh = () => ScrollTrigger.refresh();
+    window.addEventListener("load", refresh);
 
     return () => {
-      if (frame) window.cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("load", refresh);
+      trigger.kill();
     };
   }, []);
 
@@ -267,9 +272,9 @@ export default function StorytellingExperience() {
   const timelineOffset = timelineProgress * TIMELINE_CARD_SPAN;
   const story = roadmapCopy[activeStep.key];
 
-  const sceneTranslateY = -(timelineProgress * 56);
-  const sceneTranslateX = timelineProgress * 14;
-  const sceneScale = 1 + progress * 0.08;
+  const sceneTranslateY = -(timelineProgress * 92);
+  const sceneTranslateX = timelineProgress * 22;
+  const sceneScale = 1 + progress * 0.12;
 
   return (
     <section ref={sectionRef} id="story" className="relative" style={{ height: `${SCENE_HEIGHT_VH}vh` }}>
@@ -278,7 +283,7 @@ export default function StorytellingExperience() {
         <div key={step.key} id={step.anchor} className="absolute left-0 h-px w-px" style={{ top: `${Math.max(step.start * 100, 1)}%` }} />
       ))}
 
-      <div className="sticky top-0 h-screen overflow-hidden">
+      <div ref={viewportRef} className="h-screen overflow-hidden">
         <div className="mx-auto h-full w-[min(1760px,100vw)] px-2 pb-2 pt-20 lg:px-3 lg:pb-3 lg:pt-24">
           <div className="relative h-full overflow-hidden rounded-[30px] border border-slate-200/10 bg-[#04070d] shadow-[0_30px_120px_rgba(0,0,0,0.48)]">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(128,166,207,0.14),transparent_22%),radial-gradient(circle_at_82%_12%,rgba(200,220,244,0.08),transparent_20%)]" />
