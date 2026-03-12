@@ -9,24 +9,30 @@ export default function LoadingExperience() {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const start = performance.now();
-    const duration = 1200;
+    const startedAt = Date.now();
+    const duration = 1350;
 
-    let raf = 0;
-    const loop = (now: number) => {
-      const t = Math.min((now - start) / duration, 1);
+    const interval = window.setInterval(() => {
+      const elapsed = Date.now() - startedAt;
+      const t = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - t, 3);
       setProgress(Math.round(eased * 100));
-      if (t < 1) {
-        raf = requestAnimationFrame(loop);
-      } else {
+
+      if (t >= 1) {
+        window.clearInterval(interval);
         setCompleted(true);
       }
-    };
+    }, 24);
 
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
+    return () => window.clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (!completed) return;
+
+    const timeout = window.setTimeout(() => setVisible(false), 720);
+    return () => window.clearTimeout(timeout);
+  }, [completed]);
 
   if (!visible) return null;
 
@@ -36,9 +42,6 @@ export default function LoadingExperience() {
       initial={{ opacity: 1 }}
       animate={completed ? { opacity: 0 } : { opacity: 1 }}
       transition={{ duration: 0.7, ease: [0.21, 1, 0.32, 1] }}
-      onAnimationComplete={() => {
-        if (completed) setVisible(false);
-      }}
     >
       <div className="w-[min(420px,88vw)]">
         <p className="section-kicker text-center">Initializing Structural Narrative</p>
